@@ -1,0 +1,74 @@
+---
+title: "Tidy Intro Talk"
+author: "Michael Love"
+format: html
+editor: visual
+---
+
+## Data objects keep data organized
+
+```{r}
+#| message: false
+library(SummarizedExperiment)
+genes <- DataFrame(id = paste0("g",1:4), 
+                   symbol = c("ABC","DEF","GHI","JKL"))
+genes
+```
+
+```{r}
+samples <- DataFrame(sample = paste0("s",1:4),
+                     condition = c("x","y","x","y"),
+                     sex = c("m","m","f","f"))
+samples
+```
+
+```{r}
+counts <- matrix(rpois(16, lambda=100), ncol=4)
+rownames(counts) <- genes$id
+colnames(counts) <- samples$sample
+counts
+```
+
+```{r}
+se <- SummarizedExperiment(list(counts = counts),
+                           rowData=genes, 
+                           colData=samples,
+                           metadata=list(organism="Hsapiens"))
+se
+```
+
+## Objects help avoid common bookkeeping errors
+
+Reordering samples (columns) is a global operation:
+
+```{r}
+se2 <- se[,c(1,3,2,4)]
+assay(se2, "counts")
+colData(se2)
+```
+
+Assignment that might result in sample swap results in an error:
+
+```{r}
+#| error: true
+assay(se2) <- counts
+```
+
+Other such checks include comparison of genomic ranges across
+different genome builds: will result in an error.
+
+## However, hard to get started for new users
+
+```{r}
+methods(class=class(se))
+```
+
+## And yet, many beginners know dplyr and ggplot2
+
+```{r}
+#| message: false
+library(dplyr)
+samples |> 
+  as_tibble() |> 
+  filter(condition == "x")
+```
