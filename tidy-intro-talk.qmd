@@ -2,27 +2,53 @@
 title: "Tidy Intro Talk"
 author: "Michael Love"
 format: html
+highlight-style: oblivion
 editor: visual
 ---
 
 ## Data objects keep data organized
 
+-   We typically have more information than just a matrix
+
+-   Row and column information (on features and samples)
+
+-   Metadata on organism, genome build, annotation release, etc.
+
+-   Keeping this information altogether is the motivation for *data
+    objects*
+
+I will first introduce one of the main data objects in Bioconductor,
+the *SummarizedExperiment*.
+
+After introducing this, I'll motivate `tidyomics` as applied to
+Bioconductor objects.
+
+A *SummarizedExperiment* is built from three tables, which I will
+demonstrate now:
+
 ```{r}
 #| message: false
 library(SummarizedExperiment)
-genes <- DataFrame(id = paste0("g",1:4), 
-                   symbol = c("ABC","DEF","GHI","JKL"))
+# metadata about genes
+genes <- DataFrame(
+  id = c("g1","g2","g3","g4"), 
+  symbol = c("ABC","DEF","GHI","JKL")
+  )
 genes
 ```
 
 ```{r}
-samples <- DataFrame(sample = paste0("s",1:4),
-                     condition = c("x","y","x","y"),
-                     sex = c("m","m","f","f"))
+# metadata about samples
+samples <- DataFrame(
+  sample = c("s1","s2","s3","s4"),
+  condition = c("x","y","x","y"),
+  sex = c("m","m","f","f")
+  )
 samples
 ```
 
 ```{r}
+set.seed(123) # we will generate some random count data
 counts <- matrix(rpois(16, lambda=100), ncol=4)
 rownames(counts) <- genes$id
 colnames(counts) <- samples$sample
@@ -30,10 +56,12 @@ counts
 ```
 
 ```{r}
-se <- SummarizedExperiment(list(counts = counts),
-                           rowData=genes, 
-                           colData=samples,
-                           metadata=list(organism="Hsapiens"))
+se <- SummarizedExperiment(
+  assays = list(counts = counts),
+  rowData = genes, 
+  colData = samples,
+  metadata = list(organism="Hsapiens")
+  )
 se
 ```
 
@@ -50,17 +78,23 @@ colData(se2)
 Assignment that might result in sample swap results in an error:
 
 ```{r}
-#| error: true
+#| eval: false
 assay(se2) <- counts
+# Error:
+# please use 'assay(x, withDimnames=FALSE)) <- value' or 
+# 'assays(x, withDimnames=FALSE)) <- value'
+# when the rownames or colnames of the supplied assay(s) are not 
+# identical to those of the receiving  SummarizedExperiment object 'x'
 ```
 
-Other such checks include comparison of genomic ranges across
+Other such validity checks include comparison of genomic ranges across
 different genome builds: will result in an error.
 
-## However, hard to get started for new users
+## However, may be hard for new users to get started
 
 ```{r}
-methods(class=class(se))
+slotNames(se)
+methods(class = class(se))
 ```
 
 ## And yet, many beginners know dplyr and ggplot2
@@ -68,12 +102,13 @@ methods(class=class(se))
 ```{r}
 #| message: false
 library(dplyr)
+# filter to samples in condition 'x'
 samples |> 
   as_tibble() |> 
   filter(condition == "x")
 ```
 
-## tidyomics enables tidy verbs for omics objects
+## `tidyomics` enables dplyr verbs for omics objects
 
 ```{r}
 #| message: false
@@ -88,6 +123,13 @@ What does this mean "*SummarizedExperiment-tibble abstraction*"?
 ## This is still a standard Bioconductor object
 
 ```{r}
+class(se)
+dim(se)
+```
+
+## But we can use familiar dplyr verbs
+
+```{r}
 se |> 
   filter(condition == "x")
 ```
@@ -95,7 +137,6 @@ se |>
 ```{r}
 se_sub <- se |> 
   filter(condition == "x")
-class(se_sub)
 colData(se_sub)
 ```
 
@@ -110,6 +151,27 @@ se |>
   geom_point(size=2) + 
   geom_line() +
   facet_wrap(~.feature) +
+  ylim(0,200) + 
+  theme(text = element_text(size = 16))
+```
+
+```{r}
+#| echo: false
+options(dplyr.summarise.inform=FALSE)
+```
+
+```{r grouping-genes}
+# suppose we had gene groups
+rowData(se)$gene_group = c(1,1,2,2)
+se |> 
+  group_by(gene_group, sample, condition, sex) |> 
+  summarize(ave_count = mean(counts), sd_count = sd(counts)) |> 
+  ggplot(aes(condition, ave_count, 
+             ymin=ave_count - 2*sd_count, 
+             ymax=ave_count + 2*sd_count,
+             color=sex, group=sex)) + 
+  geom_pointrange(position = position_dodge(width = .25)) + 
+  facet_wrap(~gene_group, labeller = "label_both") +
   ylim(0,200) + 
   theme(text = element_text(size = 16))
 ```
