@@ -72,3 +72,44 @@ samples |>
   as_tibble() |> 
   filter(condition == "x")
 ```
+
+## tidyomics enables tidy verbs for omics objects
+
+```{r}
+#| message: false
+library(tidySummarizedExperiment)
+se
+```
+
+What does this mean "*SummarizedExperiment-tibble abstraction*"?
+
+...put a drawing...
+
+## This is still a standard Bioconductor object
+
+```{r}
+se |> 
+  filter(condition == "x")
+```
+
+```{r}
+se_sub <- se |> 
+  filter(condition == "x")
+class(se_sub)
+colData(se_sub)
+```
+
+## Facilitates quick exploration and plotting
+
+```{r ggplot}
+#| message: false
+library(ggplot2)
+se |> 
+  filter(.feature %in% c("g1","g2")) |> 
+  ggplot(aes(condition, counts, color=sex, group=sex)) + 
+  geom_point(size=2) + 
+  geom_line() +
+  facet_wrap(~.feature) +
+  ylim(0,200) + 
+  theme(text = element_text(size = 16))
+```
