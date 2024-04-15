@@ -6,7 +6,23 @@ highlight-style: oblivion
 editor: visual
 ---
 
-## Data objects keep data organized
+## Tidyomics project
+
+An open, open-source project spanning multiple R packages, and
+developers from around the world. Organized as a GitHub organization
+with GitHub Projects. For more:
+
+-   <https://github.com/tidyomics>
+
+-   <https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2>
+
+-   `tidiness_in_bioc` channel in Bioconductor Slack
+
+## Diagram of the tidyomics project
+
+![](figures/figure2.png)
+
+## Objects keep data organized
 
 -   We typically have more information than just a matrix
 
@@ -16,6 +32,10 @@ editor: visual
 
 -   Keeping this information altogether is the motivation for *data
     objects*
+
+-   Many functions in Bioconductor are *endomorphic* meaning that an
+    object is passed in, some data may be added/modified, then the
+    object is passed back out
 
 I will first introduce one of the main data objects in Bioconductor,
 the *SummarizedExperiment*.
@@ -65,7 +85,7 @@ se <- SummarizedExperiment(
 se
 ```
 
-## Objects help avoid common bookkeeping errors
+## Avoid common bookkeeping errors
 
 Reordering samples (columns) is a global operation:
 
@@ -90,14 +110,14 @@ assay(se2) <- counts
 Other such validity checks include comparison of genomic ranges across
 different genome builds: will result in an error.
 
-## However, may be hard for new users to get started
+## Can be hard for new users
 
 ```{r}
 slotNames(se)
 methods(class = class(se))
 ```
 
-## And yet, many beginners know dplyr and ggplot2
+## Many beginners know `dplyr`/`ggplot2`
 
 ```{r}
 #| message: false
@@ -108,7 +128,7 @@ samples |>
   filter(condition == "x")
 ```
 
-## `tidyomics` enables dplyr verbs for omics objects
+## Enabling dplyr verbs for omics
 
 ```{r}
 #| message: false
@@ -116,18 +136,18 @@ library(tidySummarizedExperiment)
 se
 ```
 
-What does this mean "*SummarizedExperiment-tibble abstraction*"?
+What does this mean "*SE-tibble abstraction*"?
 
 ...put a drawing...
 
-## This is still a standard Bioconductor object
+## Still a standard Bioc object
 
 ```{r}
 class(se)
 dim(se)
 ```
 
-## But we can use familiar dplyr verbs
+## We can use familiar dplyr verbs
 
 ```{r}
 se |> 
@@ -140,7 +160,14 @@ se_sub <- se |>
 colData(se_sub)
 ```
 
-## Facilitates quick exploration and plotting
+## Facilitates quick exploration
+
+```{r}
+#| message: false
+#| echo: false
+library(ggplot2)
+theme_set(theme_grey(base_size = 16))
+```
 
 ```{r ggplot}
 #| message: false
@@ -151,8 +178,7 @@ se |>
   geom_point(size=2) + 
   geom_line() +
   facet_wrap(~.feature) +
-  ylim(0,200) + 
-  theme(text = element_text(size = 16))
+  ylim(0,200)
 ```
 
 ```{r}
@@ -164,7 +190,7 @@ options(dplyr.summarise.inform=FALSE)
 # suppose we had gene groups
 rowData(se)$gene_group = c(1,1,2,2)
 se |> 
-  group_by(gene_group, sample, condition, sex) |> 
+  group_by(gene_group, condition, sex) |> 
   summarize(ave_count = mean(counts), sd_count = sd(counts)) |> 
   ggplot(aes(condition, ave_count, 
              ymin=ave_count - 2*sd_count, 
@@ -172,6 +198,60 @@ se |>
              color=sex, group=sex)) + 
   geom_pointrange(position = position_dodge(width = .25)) + 
   facet_wrap(~gene_group, labeller = "label_both") +
-  ylim(0,200) + 
-  theme(text = element_text(size = 16))
+  ylim(0,200)
 ```
+
+## Also works with Seurat and SCE
+
+*SingleCellExperiment* = *SummarizedExperiment* with extra bells and
+whistles for single cells. E.g. slots for reduced dimensions.
+
+```{r umap}
+#| message: false
+library(tidySingleCellExperiment)
+# data from tidyomics/tidyomicsWorkshopBioc2023
+library(tidyomicsWorkshopBioc2023)
+# SCE is slightly different than SE, more cell focused
+sce_obj |>
+  filter(Phase == "G1") |>
+  mutate(log10count = log10(nCount_RNA)) |>
+  ggplot(aes(UMAP_1, UMAP_2, color=log10count)) +
+  geom_point()
+```
+
+```{r}
+# can include and compute on gene expression values
+sce_obj |>
+  join_features(c("CD3D","TRDC"), shape="wide") |>
+  select(.cell, CD3D, TRDC)
+```
+
+```{r}
+# process the sample ID from the filename
+sce_obj |>
+  extract(file, "sample", "../data/.*/([a-zA-Z0-9_-]+)/outs.+") |>
+  select(sample)
+# aggregate across sample = pseudobulking, returns SE
+sce_obj |>
+  extract(file, "sample", "../data/.*/([a-zA-Z0-9_-]+)/outs.+") |>
+  aggregate_cells(sample)
+```
+
+## Genomic overlaps are joins
+
+## Matching and bootstrapping
+
+e.g. find the sum of peak score within TAD
+
+## Limitations
+
+-   package code and *non-standard evaluation*
+-   optimized code, e.g. matrix operations
+
+## Outro
+
+Recommend students/analysts are always checking:
+
+-   main contributions to variance (e.g. PCA)
+-   column and row densities
+-   known positive features, feature-level plots
