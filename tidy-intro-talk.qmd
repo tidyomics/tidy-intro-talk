@@ -237,11 +237,120 @@ sce |>
   aggregate_cells(sample)
 ```
 
-## Genomic overlaps are joins
+## Genomic overlaps as joins
 
-## Matching and bootstrapping
+```{r}
+#| echo: false
+#| message: false
+library(plyranges)
+set.seed(5)
+n <- 40
+x <- data.frame(seqnames=1, start=round(runif(n, 101, 996)), 
+                width=2, score=rnorm(n, mean=5)) |>
+  as_granges() |>
+  sort()
+seqlengths(x) <- 1000
+y <- data.frame(seqnames=1, start=c(101, 451, 801), 
+                width=200, id = c("a","b","c")) |>
+  as_granges()
+```
 
-e.g. find the sum of peak score within TAD
+```{r}
+library(plyranges)
+x
+y
+x |> join_overlap_inner(y)
+```
+
+```{r}
+# chaining operations
+x |>
+  filter(score > 3.5) |>
+  join_overlap_inner(y) |>
+  group_by(id) |>
+  summarize(ave_score = mean(score), n = n())
+```
+
+```{r ranges-plot}
+# pipe to plot
+x |>
+  filter(score > 3.5) |>
+  join_overlap_inner(y) |>
+  as_tibble() |>
+  ggplot(aes(x = id, y = score)) + 
+  geom_violin() + geom_jitter(width=.1)
+```
+
+```{r}
+# many convenience functions
+y |> 
+  anchor_5p() |>
+  mutate(width=2) |>
+  join_nearest(x, distance=TRUE)
+```
+
+## Bootstrapping and matching
+
+We developed a package
+[nullranges](https://nullranges.github.io/nullranges), as a modular tool
+to assist with making genomic comparisons. It doesn't do enrichment
+analysis but provides null genomic range sets for investigating various
+hypotheses.
+
+```{r}
+#| message: false
+library(nullranges)
+boot <- bootRanges(x, blockLength=10, R=20)
+# keep track of bootstrap iteration, gives boot dist'n
+boot |>
+  join_overlap_inner(y) |>
+  group_by(iter, id) |>
+  summarize(n_overlaps = n())
+```
+
+```{r boot-plot}
+boot |>
+  join_overlap_inner(y) |>
+  group_by(iter, id) |>
+  summarize(n_overlaps = n()) |>
+  as_tibble() |>
+  ggplot(aes(x = id, y = n_overlaps)) + 
+  geom_boxplot()
+```
+
+```{r match-covar-plot}
+xprime <- x |>
+  filter(score > 5) |>
+  mutate(score = rnorm(n(), mean = score, sd = .5))
+m <- matchRanges(focal = xprime, pool = x, covar = ~score)
+plotCovariate(m)
+```
+
+```{r}
+combined <- bind_ranges(
+  focal = xprime,
+  matching = matched(m),
+  pool = x,
+  .id = "origin"
+)
+combined
+# now use the different sets for computation:
+y |> 
+  join_overlap_inner(combined) |>
+  group_by(id, origin) |>
+  summarize(ave_score = mean(score))
+```
+
+```{r match-overlap-plot}
+y |> 
+  join_overlap_inner(combined) |>
+  group_by(id, origin) |>
+  summarize(ave_score = mean(score), sd = sd(score)) |>
+  ggplot(aes(origin, ave_score, 
+             ymin=ave_score-2*sd, ymax=ave_score+2*sd)) + 
+  geom_pointrange() +
+  facet_wrap(~id, labeller = label_both)
+```
 
 ## Limitations
 
@@ -252,6 +361,9 @@ e.g. find the sum of peak score within TAD
 
 Recommend students/analysts are always checking:
 
--   main contributions to variance (e.g. PCA)
--   column and row densities
--   known positive features, feature-level plots
+-   main contributions to variance (e.g. PCA, see `plotPCA` for bulk and
+    [OSCA](https://bioconductor.org/books/release/OSCA/) for sc)
+-   column and row densities (tidySE allows directly plotting densities
+    of rows/columns)
+-   known positive features, feature-level plots (filter to feature,
+    pipe to plot)
