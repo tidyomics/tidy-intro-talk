@@ -37,8 +37,8 @@ with GitHub Projects. For more:
     object is passed in, some data may be added/modified, then the
     object is passed back out
 
-I will first introduce one of the main data objects in Bioconductor, the
-*SummarizedExperiment*.
+I will first introduce one of the main data objects in Bioconductor,
+the *SummarizedExperiment*.
 
 After introducing this, I'll motivate `tidyomics` as applied to
 Bioconductor objects.
@@ -289,13 +289,21 @@ y |>
   join_nearest(x, distance=TRUE)
 ```
 
-## Bootstrapping and matching
+## `nullranges`
 
 We developed a package
-[nullranges](https://nullranges.github.io/nullranges), as a modular tool
-to assist with making genomic comparisons. It doesn't do enrichment
-analysis but provides null genomic range sets for investigating various
-hypotheses.
+[nullranges](https://nullranges.github.io/nullranges), as a modular
+tool to assist with making genomic comparisons. It doesn't do
+enrichment analysis but provides null genomic range sets for
+investigating various hypotheses.
+
+## Bootstrapping ranges
+
+Statistical papers from the ENCODE project noted that block
+bootstrapping genomic data preserves important spatial patterns
+(Bickel *et al.* 2010).
+
+![](figures/boot.png)
 
 ```{r}
 #| message: false
@@ -317,6 +325,13 @@ boot |>
   ggplot(aes(x = id, y = n_overlaps)) + 
   geom_boxplot()
 ```
+
+## Matching ranges
+
+Matching on covariates from a large pool allows for more focused
+hypothesis testing.
+
+![](figures/match.png)
 
 ```{r match-covar-plot}
 xprime <- x |>
@@ -346,6 +361,7 @@ y |>
   join_overlap_inner(combined) |>
   group_by(id, origin) |>
   summarize(ave_score = mean(score), sd = sd(score)) |>
+  as_tibble() |>
   ggplot(aes(origin, ave_score, 
              ymin=ave_score-2*sd, ymax=ave_score+2*sd)) + 
   geom_pointrange() +
@@ -408,11 +424,31 @@ print(mb, unit="s", signif=2)
 
 ## Outro
 
-Recommend students/analysts are always checking:
+Recommend genomic data analysts are always checking:
 
--   main contributions to variance (e.g. PCA, see `plotPCA` for bulk and
-    [OSCA](https://bioconductor.org/books/release/OSCA/) for sc)
--   column and row densities (`tidySE` allows directly plotting `geom_density`
-    of rows/columns, or `geom_violin`)
+-   main contributions to variance (e.g. PCA, see `plotPCA` for bulk
+    and [OSCA](https://bioconductor.org/books/release/OSCA/) for sc)
+-   column and row densities (`tidySE` allows directly plotting
+    `geom_density` of rows/columns, or `geom_violin`)
 -   known positive features, feature-level plots (`filter` to feature,
     pipe to `geom_point` etc.)
+
+## Contributors
+
+-   Stefano Mangiola (*tidyomics* leadership, tidy expression, single
+    cell, spatial)
+
+-   Eric Davis, Wancen Mu, Doug Phanstiel (*nullranges*)
+
+-   Stuart Lee, Michael Lawrence, Di Cook (*plyranges*)
+
+And **tidyomics developers**: William Hutchison, Timothy Keyes, Helena
+Crowell, Jacques Serizay, Charlotte Soneson, Eric Davis, Noriaki Sato,
+Lambda Moses, Boyd Tarlinton, Abdullah Nahid, Miha Kosmac, Quentin
+Clayssen, Victor Yuan, Wancen Mu, Ji-Eun Park, Izabela Mamede, Min
+Hyung Ryu, Pierre-Paul Axisa, Paulina Paiz, Chi-Lam Poon, Ming Tang
+
+## Funding
+
+*tidyomics* project funded by an Essential Open Source Software award
+from CZI and Wellcome Trust
