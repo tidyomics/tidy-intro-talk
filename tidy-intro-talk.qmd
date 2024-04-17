@@ -37,8 +37,8 @@ with GitHub Projects. For more:
     object is passed in, some data may be added/modified, then the
     object is passed back out
 
-I will first introduce one of the main data objects in Bioconductor,
-the *SummarizedExperiment*.
+I will first introduce one of the main data objects in Bioconductor, the
+*SummarizedExperiment*.
 
 After introducing this, I'll motivate `tidyomics` as applied to
 Bioconductor objects.
@@ -210,9 +210,9 @@ whistles for single cells. E.g. slots for reduced dimensions.
 #| message: false
 library(tidySingleCellExperiment)
 # data from tidyomics/tidyomicsWorkshopBioc2023
-library(tidyomicsWorkshopBioc2023)
+sce <- readRDS("data/tidyomicsWorkshopSCE.rds")
 # SCE is slightly different than SE, more cell focused
-sce_obj |>
+sce |>
   filter(Phase == "G1") |>
   mutate(log10count = log10(nCount_RNA)) |>
   ggplot(aes(UMAP_1, UMAP_2, color=log10count)) +
@@ -221,18 +221,18 @@ sce_obj |>
 
 ```{r}
 # can include and compute on gene expression values
-sce_obj |>
+sce |>
   join_features(c("CD3D","TRDC"), shape="wide") |>
   select(.cell, CD3D, TRDC)
 ```
 
 ```{r}
 # process the sample ID from the filename
-sce_obj |>
+sce |>
   extract(file, "sample", "../data/.*/([a-zA-Z0-9_-]+)/outs.+") |>
   select(sample)
 # aggregate across sample = pseudobulking, returns SE
-sce_obj |>
+sce |>
   extract(file, "sample", "../data/.*/([a-zA-Z0-9_-]+)/outs.+") |>
   aggregate_cells(sample)
 ```
