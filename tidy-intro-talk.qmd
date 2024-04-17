@@ -352,6 +352,20 @@ y |>
   facet_wrap(~id, labeller = label_both)
 ```
 
+## What has been implemented
+
+-   Matrix-shaped objects (SE, SCE)
+
+-   Ranges
+
+-   Interactions
+
+-   Cytometry
+
+-   Spatial
+
+-   more to come...
+
 ## Limitations
 
 -   package code and *non-standard evaluation*
