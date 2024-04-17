@@ -371,13 +371,48 @@ y |>
 -   package code and *non-standard evaluation*
 -   optimized code, e.g. matrix operations
 
+```{r}
+#| echo: false
+counts <- matrix(rpois(1e5,100),ncol=100)
+rowdata <- DataFrame(x=1:1e3)
+se_test <- SummarizedExperiment(
+  assays = list(counts = counts),
+  rowData = rowdata
+)
+```
+
+```{r}
+library(tidySummarizedExperiment)
+se_test
+# looping over 1000 genes, averaging 100 samples
+se_test |>
+  group_by(.feature) |>
+  summarize(ave_count = mean(counts))
+```
+
+```{r}
+#| echo: false
+tidy_version <- function(x) {
+  suppressMessages({
+    x |> group_by(.feature) |> summarize(ave_count = mean(counts))
+  })
+}
+```
+
+```{r}
+library(microbenchmark)
+mb <- microbenchmark(tidy = tidy_version(se_test), 
+                     baseR = rowMeans(assay(se_test)), times = 5)
+print(mb, unit="s", signif=2)
+```
+
 ## Outro
 
 Recommend students/analysts are always checking:
 
 -   main contributions to variance (e.g. PCA, see `plotPCA` for bulk and
     [OSCA](https://bioconductor.org/books/release/OSCA/) for sc)
--   column and row densities (tidySE allows directly plotting densities
-    of rows/columns)
--   known positive features, feature-level plots (filter to feature,
-    pipe to plot)
+-   column and row densities (`tidySE` allows directly plotting `geom_density`
+    of rows/columns, or `geom_violin`)
+-   known positive features, feature-level plots (`filter` to feature,
+    pipe to `geom_point` etc.)
