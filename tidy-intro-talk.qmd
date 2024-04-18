@@ -18,9 +18,13 @@ with GitHub Projects. For more:
 
 -   `tidiness_in_bioc` channel in Bioconductor Slack
 
-## Diagram of the tidyomics project
+## Diagram of tidyomics workflows
 
-![](figures/figure2.png)
+![](figures/figure2.png){fig-alt="Diagram of how packages share a similar grammar to operate on data objects. From top to bottom, the data are analyzed, manipulated, and made into plots."}
+
+## International development team
+
+![](figures/tidyomics_community.png){fig-alt="Diagram of tidyomics community, with users and developers interacting. On the top are users with arrows coming from developers and packages. On the bottom is the extended community, including Bioconductor."}
 
 ## Objects keep data organized
 
@@ -140,7 +144,7 @@ What does this mean "*SE-tibble abstraction*"?
 Essentially this is an API, we can use our familiar verbs and interact
 with the native object.
 
-![](figures/counter.png)
+![](figures/counter.png){fig-alt="Picture of a counter with a menu and a bell"}
 
 ## Still a standard Bioc object
 
@@ -262,6 +266,11 @@ y <- data.frame(seqnames=1, start=c(101, 451, 801),
 library(plyranges)
 x
 y
+```
+
+![](figures/woodjoin.png){fig-alt="Picture of two stacks of wood being interleaved"}
+
+```{r}
 x |> join_overlap_inner(y)
 ```
 
@@ -308,7 +317,7 @@ Statistical papers from the ENCODE project noted that *block
 bootstrapping* genomic data preserves important spatial patterns
 (Bickel *et al.* 2010).
 
-![](figures/boot.png)
+![](figures/boot.png){fig-alt="Diagram of block bootstrapping genomic ranges. Blocks are resampled from original data and arranged to form new range sets."}
 
 ```{r}
 #| message: false
@@ -336,7 +345,7 @@ boot |>
 Matching on covariates from a large pool allows for more focused
 hypothesis testing.
 
-![](figures/match.png)
+![](figures/match.png){fig-alt="Diagram of matching genomic ranges. A pool of different colored ranges are drawn from to match the warmer colors of a focal set of ranges."}
 
 ```{r match-covar-plot}
 xprime <- x |>
@@ -443,6 +452,12 @@ Recommend genomic data analysts are always checking:
     `geom_density` of rows/columns, or `geom_violin`)
 -   known positive features, feature-level plots (`filter` to feature,
     pipe to `geom_point` etc.)
+
+If you're interested in more complicated use cases of `tidyomics` see
+this online book:
+
+-   [Tidy ranges
+    tutorial](https://tidyomics.github.io/tidy-ranges-tutorial)
 
 ## Contributors
 

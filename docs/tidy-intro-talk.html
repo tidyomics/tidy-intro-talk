@@ -139,9 +139,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><code>tidiness_in_bioc</code> channel in Bioconductor Slack</p></li>
 </ul>
 </section>
-<section id="diagram-of-the-tidyomics-project" class="level2">
-<h2 class="anchored" data-anchor-id="diagram-of-the-tidyomics-project">Diagram of the tidyomics project</h2>
-<p><img src="figures/figure2.png" class="img-fluid"></p>
+<section id="diagram-of-tidyomics-workflows" class="level2">
+<h2 class="anchored" data-anchor-id="diagram-of-tidyomics-workflows">Diagram of tidyomics workflows</h2>
+<p><img src="figures/figure2.png" class="img-fluid" alt="Diagram of how packages share a similar grammar to operate on data objects. From top to bottom, the data are analyzed, manipulated, and made into plots."></p>
+</section>
+<section id="international-development-team" class="level2">
+<h2 class="anchored" data-anchor-id="international-development-team">International development team</h2>
+<p><img src="figures/tidyomics_community.png" class="img-fluid" alt="Diagram of tidyomics community, with users and developers interacting. On the top are users with arrows coming from developers and packages. On the bottom is the extended community, including Bioconductor."></p>
 </section>
 <section id="objects-keep-data-organized" class="level2">
 <h2 class="anchored" data-anchor-id="objects-keep-data-organized">Objects keep data organized</h2>
@@ -351,7 +355,7 @@ see '?methods' for accessing help and source code</code></pre>
 </div>
 <p>What does this mean “<em>SE-tibble abstraction</em>”?</p>
 <p>Essentially this is an API, we can use our familiar verbs and interact with the native object.</p>
-<p><img src="figures/counter.png" class="img-fluid"></p>
+<p><img src="figures/counter.png" class="img-fluid" alt="Picture of a counter with a menu and a bell"></p>
 </section>
 <section id="still-a-standard-bioc-object" class="level2">
 <h2 class="anchored" data-anchor-id="still-a-standard-bioc-object">Still a standard Bioc object</h2>
@@ -559,6 +563,9 @@ s3          s3           x           f</code></pre>
   -------
   seqinfo: 1 sequence from an unspecified genome; no seqlengths</code></pre>
 </div>
+</div>
+<p><img src="figures/woodjoin.png" class="img-fluid" alt="Picture of two stacks of wood being interleaved"></p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span> <span class="fu">join_overlap_inner</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 30 ranges and 2 metadata columns:
@@ -633,7 +640,7 @@ s3          s3           x           f</code></pre>
 <section id="bootstrapping-ranges" class="level2">
 <h2 class="anchored" data-anchor-id="bootstrapping-ranges">Bootstrapping ranges</h2>
 <p>Statistical papers from the ENCODE project noted that <em>block bootstrapping</em> genomic data preserves important spatial patterns (Bickel <em>et al.</em> 2010).</p>
-<p><img src="figures/boot.png" class="img-fluid"></p>
+<p><img src="figures/boot.png" class="img-fluid" alt="Diagram of block bootstrapping genomic ranges. Blocks are resampled from original data and arranged to form new range sets."></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nullranges)</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>boot <span class="ot">&lt;-</span> <span class="fu">bootRanges</span>(x, <span class="at">blockLength=</span><span class="dv">10</span>, <span class="at">R=</span><span class="dv">20</span>)</span>
@@ -675,7 +682,7 @@ s3          s3           x           f</code></pre>
 <section id="matching-ranges" class="level2">
 <h2 class="anchored" data-anchor-id="matching-ranges">Matching ranges</h2>
 <p>Matching on covariates from a large pool allows for more focused hypothesis testing.</p>
-<p><img src="figures/match.png" class="img-fluid"></p>
+<p><img src="figures/match.png" class="img-fluid" alt="Diagram of matching genomic ranges. A pool of different colored ranges are drawn from to match the warmer colors of a focal set of ranges."></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>xprime <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
@@ -825,8 +832,8 @@ accurate nanosecond times to avoid potential integer overflows</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: seconds
   expr   min     lq   mean median     uq   max neval
-  tidy 0.033 0.0340 0.0340 0.0340 0.0340 0.036     5
- baseR 0.001 0.0013 0.0014 0.0013 0.0014 0.002     5</code></pre>
+  tidy 0.033 0.0330 0.0330 0.0330 0.0340 0.034     5
+ baseR 0.001 0.0013 0.0014 0.0013 0.0013 0.002     5</code></pre>
 </div>
 </div>
 </section>
@@ -837,6 +844,10 @@ accurate nanosecond times to avoid potential integer overflows</code></pre>
 <li>main contributions to variance (e.g.&nbsp;PCA, see <code>plotPCA</code> for bulk and <a href="https://bioconductor.org/books/release/OSCA/">OSCA</a> for sc)</li>
 <li>column and row densities (<code>tidySE</code> allows directly plotting <code>geom_density</code> of rows/columns, or <code>geom_violin</code>)</li>
 <li>known positive features, feature-level plots (<code>filter</code> to feature, pipe to <code>geom_point</code> etc.)</li>
+</ul>
+<p>If you’re interested in more complicated use cases of <code>tidyomics</code> see this online book:</p>
+<ul>
+<li><a href="https://tidyomics.github.io/tidy-ranges-tutorial">Tidy ranges tutorial</a></li>
 </ul>
 </section>
 <section id="contributors" class="level2">
