@@ -5,3 +5,5 @@
 *.html
 tidy-intro-talk_files
 .DS_store
+
+/.quarto/

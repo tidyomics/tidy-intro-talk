@@ -43,8 +43,7 @@ the *SummarizedExperiment*.
 After introducing this, I'll motivate `tidyomics` as applied to
 Bioconductor objects.
 
-A *SummarizedExperiment* is built from three tables, which I will
-demonstrate now:
+A *SummarizedExperiment* is built from three tables:
 
 ```{r}
 #| message: false
@@ -68,7 +67,7 @@ samples
 ```
 
 ```{r}
-set.seed(123) # we will generate some random count data
+set.seed(123) # some random count data
 counts <- matrix(rpois(16, lambda=100), ncol=4)
 rownames(counts) <- genes$id
 colnames(counts) <- samples$sample
@@ -138,7 +137,10 @@ se
 
 What does this mean "*SE-tibble abstraction*"?
 
-...put a drawing...
+Essentially this is an API, we can use our familiar verbs and interact
+with the native object.
+
+![](figures/counter.png)
 
 ## Still a standard Bioc object
 
@@ -209,14 +211,15 @@ whistles for single cells. E.g. slots for reduced dimensions.
 ```{r umap}
 #| message: false
 library(tidySingleCellExperiment)
+library(scales)
 # data from tidyomics/tidyomicsWorkshopBioc2023
 sce <- readRDS("data/tidyomicsWorkshopSCE.rds")
 # SCE is slightly different than SE, more cell focused
 sce |>
   filter(Phase == "G1") |>
-  mutate(log10count = log10(nCount_RNA)) |>
-  ggplot(aes(UMAP_1, UMAP_2, color=log10count)) +
-  geom_point()
+  ggplot(aes(UMAP_1, UMAP_2, color=nCount_RNA)) +
+  geom_point() + 
+  scale_color_gradient2(trans="log10")
 ```
 
 ```{r}
@@ -228,16 +231,16 @@ sce |>
 
 ```{r}
 # process the sample ID from the filename
+sce <- sce |>
+  extract(file, "sample", "../data/.*/([a-zA-Z0-9_-]+)/outs.+")
 sce |>
-  extract(file, "sample", "../data/.*/([a-zA-Z0-9_-]+)/outs.+") |>
   select(sample)
 # aggregate across sample = pseudobulking, returns SE
 sce |>
-  extract(file, "sample", "../data/.*/([a-zA-Z0-9_-]+)/outs.+") |>
   aggregate_cells(sample)
 ```
 
-## Genomic overlaps as joins
+## Genomic overlap as a `join`
 
 ```{r}
 #| echo: false
@@ -262,6 +265,8 @@ y
 x |> join_overlap_inner(y)
 ```
 
+Many options, `directed`, `within`, `maxgap`, `minoverlap`, etc.
+
 ```{r}
 # chaining operations
 x |>
@@ -284,7 +289,7 @@ x |>
 ```{r}
 # many convenience functions
 y |> 
-  anchor_5p() |>
+  anchor_5p() |> # 5', 3', start, end center
   mutate(width=2) |>
   join_nearest(x, distance=TRUE)
 ```
@@ -299,8 +304,8 @@ investigating various hypotheses.
 
 ## Bootstrapping ranges
 
-Statistical papers from the ENCODE project noted that block
-bootstrapping genomic data preserves important spatial patterns
+Statistical papers from the ENCODE project noted that *block
+bootstrapping* genomic data preserves important spatial patterns
 (Bickel *et al.* 2010).
 
 ![](figures/boot.png)
@@ -350,15 +355,15 @@ combined <- bind_ranges(
 )
 combined
 # now use the different sets for computation:
-y |> 
-  join_overlap_inner(combined) |>
+combined |> 
+  join_overlap_inner(y) |>
   group_by(id, origin) |>
   summarize(ave_score = mean(score))
 ```
 
 ```{r match-overlap-plot}
-y |> 
-  join_overlap_inner(combined) |>
+combined |> 
+  join_overlap_inner(y) |>
   group_by(id, origin) |>
   summarize(ave_score = mean(score), sd = sd(score)) |>
   as_tibble() |>
@@ -367,6 +372,12 @@ y |>
   geom_pointrange() +
   facet_wrap(~id, labeller = label_both)
 ```
+
+These are published as Application Notes:
+
+-   [bootRanges](https://doi.org/10.1093/bioinformatics/btad190)
+
+-   [matchRanges](https://doi.org/10.1093/bioinformatics/btad197)
 
 ## What has been implemented
 
