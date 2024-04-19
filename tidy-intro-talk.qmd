@@ -194,7 +194,7 @@ options(dplyr.summarise.inform=FALSE)
 
 ```{r grouping-genes}
 # suppose we had gene groups
-rowData(se)$gene_group = c(1,1,2,2)
+rowData(se)$gene_group <- c(1,1,2,2)
 se |> 
   group_by(gene_group, condition, sex) |> 
   summarize(ave_count = mean(counts), sd_count = sd(counts)) |> 
@@ -298,7 +298,7 @@ x |>
 ```{r}
 # many convenience functions
 y |> 
-  anchor_5p() |> # 5', 3', start, end center
+  anchor_5p() |> # 5', 3', start, end, center
   mutate(width=2) |>
   join_nearest(x, distance=TRUE)
 ```
