@@ -332,7 +332,7 @@ see '?methods' for accessing help and source code</code></pre>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble abstraction: 16 × 8
-# [90mFeatures=4 | Samples=4 | Assays=counts[0m
+# Features=4 | Samples=4 | Assays=counts
    .feature .sample counts sample condition sex   id    symbol
    &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; 
  1 g1       s1          94 s1     x         m     g1    ABC   
@@ -379,7 +379,7 @@ attr(,"package")
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble abstraction: 8 × 8
-# [90mFeatures=4 | Samples=2 | Assays=counts[0m
+# Features=4 | Samples=2 | Assays=counts
   .feature .sample counts sample condition sex   id    symbol
   &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; 
 1 g1       s1          94 s1     x         m     g1    ABC   
@@ -512,7 +512,7 @@ s3          s3           x           f</code></pre>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aggregate_cells</span>(sample)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble abstraction: 4,820 × 9
-# [90mFeatures=482 | Samples=10 | Assays=counts, logcounts[0m
+# Features=482 | Samples=10 | Assays=counts, logcounts
    .feature   .sample  counts logcounts .aggregated_cells sample   batch BCB    treatment
    &lt;chr&gt;      &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;             &lt;int&gt; &lt;chr&gt;    &lt;fct&gt; &lt;fct&gt;  &lt;chr&gt;    
  1 ABCC3      SI-GA-E5      0     0                   238 SI-GA-E5 2     BCB097 treated  
@@ -781,7 +781,7 @@ s3          s3           x           f</code></pre>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>se_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble abstraction: 100,000 × 4
-# [90mFeatures=1000 | Samples=100 | Assays=counts[0m
+# Features=1000 | Samples=100 | Assays=counts
    .feature .sample counts     x
    &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;int&gt;
  1 1        1           94     1
@@ -831,9 +831,9 @@ accurate nanosecond times to avoid potential integer overflows</code></pre>
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mb, <span class="at">unit=</span><span class="st">"s"</span>, <span class="at">signif=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: seconds
-  expr     min     lq   mean median     uq    max neval
-  tidy 0.03300 0.0330 0.0330 0.0330 0.0340 0.0350     5
- baseR 0.00096 0.0013 0.0014 0.0013 0.0013 0.0019     5</code></pre>
+  expr     min     lq   mean median     uq   max neval
+  tidy 0.03300 0.0340 0.0360 0.0350 0.0350 0.040     5
+ baseR 0.00098 0.0013 0.0015 0.0013 0.0018 0.002     5</code></pre>
 </div>
 </div>
 </section>
