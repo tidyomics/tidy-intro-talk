@@ -207,6 +207,19 @@ se |>
   ylim(0,200)
 ```
 
+We can `mutate` assay data, row data, or column data by modifying
+existing columns. If we want to add new data to rows or columns, e.g.
+row summaries, a fast way to do this is `mutate_features` (or
+`mutate_samples` for columns). These convenience functions are added
+in the devel branch in Summer 2024, and available with
+`install_github`.
+
+```{r}
+se %>%
+  mutate_features(row_vars = rowVars(assay(.))) |>
+  filter(row_vars > 100)
+```
+
 ## Also works with Seurat and SCE
 
 *SingleCellExperiment* = *SummarizedExperiment* with extra bells and
