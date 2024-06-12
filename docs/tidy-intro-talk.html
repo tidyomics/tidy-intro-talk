@@ -796,66 +796,6 @@ s3          s3           x           f</code></pre>
 <li>package code and <em>non-standard evaluation</em></li>
 <li>optimized code, e.g.&nbsp;matrix operations</li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidySummarizedExperiment)</span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>se_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A SummarizedExperiment-tibble abstraction: 100,000 × 4
-# Features=1000 | Samples=100 | Assays=counts
-   .feature .sample counts     x
-   &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;int&gt;
- 1 1        1           94     1
- 2 2        1           79     2
- 3 3        1           96     3
- 4 4        1           94     4
- 5 5        1           99     5
- 6 6        1          130     6
- 7 7        1          115     7
- 8 8        1          100     8
- 9 9        1           91     9
-10 10       1           85    10
-# ℹ 40 more rows</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># looping over 1000 genes, averaging 100 samples</span></span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>se_test <span class="sc">|&gt;</span></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.feature) <span class="sc">|&gt;</span></span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_count =</span> <span class="fu">mean</span>(counts))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>tidySummarizedExperiment says: A data frame is returned for independent data analysis.</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,000 × 2
-   .feature ave_count
-   &lt;chr&gt;        &lt;dbl&gt;
- 1 1             99.3
- 2 10           102. 
- 3 100          101. 
- 4 1000          99.8
- 5 101          101. 
- 6 102          100. 
- 7 103          101. 
- 8 104          102. 
- 9 105           99.4
-10 106          100. 
-# ℹ 990 more rows</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>mb <span class="ot">&lt;-</span> <span class="fu">microbenchmark</span>(<span class="at">tidy =</span> <span class="fu">tidy_version</span>(se_test), </span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">baseR =</span> <span class="fu">rowMeans</span>(<span class="fu">assay</span>(se_test)), <span class="at">times =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in microbenchmark(tidy = tidy_version(se_test), baseR = rowMeans(assay(se_test)), : less
-accurate nanosecond times to avoid potential integer overflows</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mb, <span class="at">unit=</span><span class="st">"s"</span>, <span class="at">signif=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Unit: seconds
-  expr    min     lq   mean median     uq    max neval
-  tidy 0.0440 0.0470 0.0540  0.056 0.0580 0.0640     5
- baseR 0.0017 0.0017 0.0023  0.002 0.0027 0.0032     5</code></pre>
-</div>
-</div>
 </section>
 <section id="outro" class="level2">
 <h2 class="anchored" data-anchor-id="outro">Outro</h2>
