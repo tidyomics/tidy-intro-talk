@@ -148,14 +148,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="keep-data-organized-in-objects" class="level1">
-<h1>Keep data organized in objects</h1>
+<h1>Keep data organized in <em>objects</em></h1>
 <ul>
 <li><p>We typically have more information than just a matrix</p></li>
 <li><p>Row and column information (on features and samples)</p></li>
+<li><p>Annotated matrix data, see also in python <code>xarray</code>, <code>AnnData</code></p></li>
 <li><p>Metadata on organism, genome build, annotation release, etc.</p></li>
-<li><p>Keeping this information altogether is the motivation for <em>data objects</em></p></li>
-<li><p>Many functions in Bioconductor are <em>endomorphic</em> meaning that an object is passed in, some data may be added/modified, then the object is passed back out</p></li>
+<li><p>Bioconductor S4: 2002: <em>ExpressionSet</em>; 2011: <em>SummarizedExperiment</em></p></li>
+<li><p>Many functions in Bioconductor are <em>endomorphic</em>: <code>x |&gt; f -&gt; x</code></p></li>
 </ul>
+<hr>
 <p>I will first introduce one of the main data objects in Bioconductor, the <em>SummarizedExperiment</em>.</p>
 <p>After introducing this, I’ll motivate <code>tidyomics</code> as applied to Bioconductor objects.</p>
 <p>A <em>SummarizedExperiment</em> is built from three tables:</p>
@@ -270,40 +272,18 @@ s4          s4           y           f</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "colData"         "assays"          "NAMES"           "elementMetadata" "metadata"       </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">methods</span>(<span class="at">class =</span> <span class="fu">class</span>(se))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">methods</span>(<span class="at">class =</span> <span class="fu">class</span>(se)) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  [1] !=                    [                     [[                    [[&lt;-                 
-  [5] [&lt;-                   %in%                  &lt;                     &lt;=                   
-  [9] ==                    &gt;                     &gt;=                    $                    
- [13] $&lt;-                   aggregate             anyDuplicated         anyNA                
- [17] append                as.character          as.complex            as.data.frame        
- [21] as.env                as.integer            as.list               as.logical           
- [25] as.matrix             as.numeric            as.raw                assay                
- [29] assay&lt;-               assayNames            assayNames&lt;-          assays               
- [33] assays&lt;-              bindROWS              by                    c                    
- [37] cbind                 coerce                coerce&lt;-              colData              
- [41] colData&lt;-             colnames              combineCols           combineRows          
- [45] countOverlaps         dim                   dimnames              dimnames&lt;-           
- [49] duplicated            elementMetadata       elementMetadata&lt;-     eval                 
- [53] expand                expand.grid           extractROWS           FactorToClass        
- [57] findOverlaps          head                  horizontal_slot_names intersect            
- [61] is.na                 length                lengths               match                
- [65] mcols                 mcols&lt;-               merge                 mergeROWS            
- [69] metadata              metadata&lt;-            mstack                names                
- [73] names&lt;-               ncol                  nrow                  overlapsAny          
- [77] parallel_slot_names   rank                  rbind                 realize              
- [81] relist                rename                rep                   rep.int              
- [85] replaceROWS           rev                   rowData               rowData&lt;-            
- [89] ROWNAMES              rownames              ROWNAMES&lt;-            rowRanges            
- [93] rowRanges&lt;-           selfmatch             seqlevelsInUse        setdiff              
- [97] setequal              shiftApply            show                  showAsCell           
-[101] sort                  split                 split&lt;-               subset               
-[105] subsetByOverlaps      summary               table                 tail                 
-[109] tapply                transform             union                 unique               
-[113] updateObject          values                values&lt;-              vertical_slot_names  
-[117] window                window&lt;-              with                  xtabs                
-[121] xtfrm                
-see '?methods' for accessing help and source code</code></pre>
+<pre><code> [1] "!=,ANY,Vector-method"                                        
+ [2] "!=,Vector,ANY-method"                                        
+ [3] "!=,Vector,Vector-method"                                     
+ [4] "[,SummarizedExperiment,ANY,ANY,ANY-method"                   
+ [5] "[[,SummarizedExperiment,ANY,missing-method"                  
+ [6] "[[&lt;-,SummarizedExperiment,ANY,missing-method"                
+ [7] "[&lt;-,SummarizedExperiment,ANY,ANY,SummarizedExperiment-method"
+ [8] "[&lt;-,Vector,ANY,ANY,ANY-method"                               
+ [9] "%in%,ANY,Vector-method"                                      
+[10] "%in%,Vector,ANY-method"                                      </code></pre>
 </div>
 </div>
 </section>
@@ -420,8 +400,8 @@ s3          s3           x           f</code></pre>
 <p><img src="tidy-intro-talk_files/figure-html/ggplot-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<section id="also-works-with-seurat-and-sce" class="level2">
-<h2 class="anchored" data-anchor-id="also-works-with-seurat-and-sce">Also works with Seurat and SCE</h2>
+<section id="works-with-seurat-and-sce" class="level2">
+<h2 class="anchored" data-anchor-id="works-with-seurat-and-sce">Works with Seurat and SCE</h2>
 <p><em>SingleCellExperiment</em> = <em>SummarizedExperiment</em> with extra bells and whistles for single cells. E.g. slots for reduced dimensions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidySingleCellExperiment)</span>
@@ -440,17 +420,23 @@ s3          s3           x           f</code></pre>
 </div>
 </section>
 </section>
-<section id="efficient-operation-on-se-with-plyxp" class="level1">
-<h1>Efficient operation on SE with <code>plyxp</code></h1>
+<section id="new-efficient-operation-on-se-with-plyxp" class="level1">
+<h1>New: Efficient operation on SE with <code>plyxp</code></h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "SummarizedExperiment"
+attr(,"package")
+[1] "SummarizedExperiment"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  a b c  d
 A 1 4 7 10
 B 2 5 8 11
 C 3 6 9 12</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 4 rows and 1 column
       type
@@ -460,7 +446,7 @@ b        1
 c        2
 d        2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowData</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 3 rows and 1 column
      length
@@ -471,10 +457,10 @@ C        30</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyxp)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>xp <span class="ot">&lt;-</span> simple <span class="sc">|&gt;</span> </span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_plyxp</span>()</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>xp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyxp)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>xp <span class="ot">&lt;-</span> simple <span class="sc">|&gt;</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_plyxp</span>()</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>xp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble Abstraction: 3 × 4
     .features .samples | counts | length | type 
@@ -494,8 +480,8 @@ n   C         d        |     12 |     30 | 2
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>xp <span class="sc">|&gt;</span> </span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">norm_counts =</span> counts <span class="sc">/</span> .rows<span class="sc">$</span>length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>xp <span class="sc">|&gt;</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">norm_counts =</span> counts <span class="sc">/</span> .rows<span class="sc">$</span>length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble Abstraction: 3 × 4
     .features .samples | counts norm_counts | length | type 
@@ -515,10 +501,10 @@ n   C         d        |     12        0.4  |     30 | 2
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>summed <span class="ot">&lt;-</span> xp <span class="sc">|&gt;</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="fu">cols</span>(type)) <span class="sc">|&gt;</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">sum =</span> <span class="fu">rowSums</span>(counts))</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>summed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>summed <span class="ot">&lt;-</span> xp <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="fu">cols</span>(type)) <span class="sc">|&gt;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">sum =</span> <span class="fu">rowSums</span>(counts))</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>summed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble Abstraction: 3 × 2
 # Groups: cols(type)
@@ -531,7 +517,7 @@ n   C         d        |     12        0.4  |     30 | 2
 5 B                2 |    19 |     20 |     2
 6 C                2 |    21 |     30 |     2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(summed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">assay</span>(summed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  [,1] [,2]
 A    5   17
@@ -539,17 +525,45 @@ B    7   19
 C    9   21</code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(xp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "PlySummarizedExperiment"
+attr(,"package")
+[1] "plyxp"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(xp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 4 rows and 1 column
+      type
+  &lt;factor&gt;
+a        1
+b        1
+c        2
+d        2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>xp <span class="sc">|&gt;</span> <span class="fu">se</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class: SummarizedExperiment 
+dim: 3 4 
+metadata(0):
+assays(1): counts
+rownames(3): A B C
+rowData names(1): length
+colnames(4): a b c d
+colData names(1): type</code></pre>
+</div>
+</div>
 </section>
 <section id="computing-on-genomic-ranges-with-tidy-grammar" class="level1">
 <h1>Computing on genomic ranges with tidy grammar</h1>
-<ul>
-<li>put something here about that</li>
-</ul>
+<p>Nontrivial to translate biological or biomedical questions about the genome into code. The tidy grammar helps in this case with familiar concepts of filters, joins, grouping, mutation, or summarization.</p>
+<p><img src="figures/fillingthegaps.png" class="img-fluid" alt="Source: 'Filling the Gaps', T2T Consoritium, Science."></p>
 <section id="genomic-overlap-as-a-join" class="level2">
 <h2 class="anchored" data-anchor-id="genomic-overlap-as-a-join">Genomic overlap as a <code>join</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyranges)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyranges)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 40 ranges and 1 metadata column:
        seqnames    ranges strand |     score
@@ -568,7 +582,7 @@ C    9   21</code></pre>
   -------
   seqinfo: 1 sequence from an unspecified genome</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 3 ranges and 1 metadata column:
       seqnames    ranges strand |          id
@@ -582,7 +596,7 @@ C    9   21</code></pre>
 </div>
 <p><img src="figures/woodjoin.png" class="img-fluid" alt="Picture of two stacks of wood being interleaved"></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span> <span class="fu">join_overlap_inner</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span> <span class="fu">join_overlap_inner</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 30 ranges and 2 metadata columns:
        seqnames    ranges strand |     score          id
@@ -604,12 +618,12 @@ C    9   21</code></pre>
 </div>
 <p>Many options, <code>directed</code>, <code>within</code>, <code>maxgap</code>, <code>minoverlap</code>, etc.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># chaining operations</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="fl">3.5</span>) <span class="sc">|&gt;</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score), <span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># chaining operations</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="fl">3.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score), <span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 3 rows and 3 columns
            id ave_score         n
@@ -620,23 +634,23 @@ C    9   21</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pipe to plot</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="fl">3.5</span>) <span class="sc">|&gt;</span></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> id, <span class="at">y =</span> score)) <span class="sc">+</span> </span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">width=</span>.<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pipe to plot</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="fl">3.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> id, <span class="at">y =</span> score)) <span class="sc">+</span> </span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">width=</span>.<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="tidy-intro-talk_files/figure-html/ranges-plot-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># many convenience functions</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>y <span class="sc">|&gt;</span> </span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anchor_5p</span>() <span class="sc">|&gt;</span> <span class="co"># 5', 3', start, end, center</span></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">width=</span><span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_nearest</span>(x, <span class="at">distance=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># many convenience functions</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>y <span class="sc">|&gt;</span> </span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anchor_5p</span>() <span class="sc">|&gt;</span> <span class="co"># 5', 3', start, end, center</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">width=</span><span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_nearest</span>(x, <span class="at">distance=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 3 ranges and 3 metadata columns:
       seqnames    ranges strand |          id     score  distance
@@ -661,13 +675,13 @@ C    9   21</code></pre>
 <p>Statistical papers from the ENCODE project noted that <em>block bootstrapping</em> genomic data preserves important spatial patterns (Bickel <em>et al.</em> 2010).</p>
 <p><img src="figures/boot.png" class="img-fluid" alt="Diagram of block bootstrapping genomic ranges. Blocks are resampled from original data and arranged to form new range sets."></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nullranges)</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>boot <span class="ot">&lt;-</span> <span class="fu">bootRanges</span>(x, <span class="at">blockLength=</span><span class="dv">10</span>, <span class="at">R=</span><span class="dv">20</span>)</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co"># keep track of bootstrap iteration, gives boot dist'n</span></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>boot <span class="sc">|&gt;</span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iter, id) <span class="sc">|&gt;</span></span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n_overlaps =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nullranges)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>boot <span class="ot">&lt;-</span> <span class="fu">bootRanges</span>(x, <span class="at">blockLength=</span><span class="dv">10</span>, <span class="at">R=</span><span class="dv">20</span>)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="co"># keep track of bootstrap iteration, gives boot dist'n</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>boot <span class="sc">|&gt;</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iter, id) <span class="sc">|&gt;</span></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n_overlaps =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 60 rows and 3 columns
      iter          id n_overlaps
@@ -686,13 +700,13 @@ C    9   21</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>boot <span class="sc">|&gt;</span></span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iter, id) <span class="sc">|&gt;</span></span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n_overlaps =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> id, <span class="at">y =</span> n_overlaps)) <span class="sc">+</span> </span>
-<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>boot <span class="sc">|&gt;</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iter, id) <span class="sc">|&gt;</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n_overlaps =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> id, <span class="at">y =</span> n_overlaps)) <span class="sc">+</span> </span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="tidy-intro-talk_files/figure-html/boot-plot-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -703,23 +717,23 @@ C    9   21</code></pre>
 <p>Matching on covariates from a large pool allows for more focused hypothesis testing.</p>
 <p><img src="figures/match.png" class="img-fluid" alt="Diagram of matching genomic ranges. A pool of different colored ranges are drawn from to match the warmer colors of a focal set of ranges."></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>xprime <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">score =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="at">mean =</span> score, <span class="at">sd =</span> .<span class="dv">5</span>))</span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">matchRanges</span>(<span class="at">focal =</span> xprime, <span class="at">pool =</span> x, <span class="at">covar =</span> <span class="sc">~</span>score)</span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCovariate</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>xprime <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">score =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="at">mean =</span> score, <span class="at">sd =</span> .<span class="dv">5</span>))</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">matchRanges</span>(<span class="at">focal =</span> xprime, <span class="at">pool =</span> x, <span class="at">covar =</span> <span class="sc">~</span>score)</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCovariate</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="tidy-intro-talk_files/figure-html/match-covar-plot-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>combined <span class="ot">&lt;-</span> <span class="fu">bind_ranges</span>(</span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">focal =</span> xprime,</span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">matching =</span> <span class="fu">matched</span>(m),</span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">pool =</span> x,</span>
-<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"origin"</span></span>
-<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>combined</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>combined <span class="ot">&lt;-</span> <span class="fu">bind_ranges</span>(</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">focal =</span> xprime,</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">matching =</span> <span class="fu">matched</span>(m),</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">pool =</span> x,</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"origin"</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>combined</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 82 ranges and 2 metadata columns:
        seqnames    ranges strand |     score origin
@@ -738,11 +752,11 @@ C    9   21</code></pre>
   -------
   seqinfo: 1 sequence from an unspecified genome</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now use the different sets for computation:</span></span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>combined <span class="sc">|&gt;</span> </span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id, origin) <span class="sc">|&gt;</span></span>
-<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now use the different sets for computation:</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>combined <span class="sc">|&gt;</span> </span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id, origin) <span class="sc">|&gt;</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 9 rows and 3 columns
            id   origin ave_score
@@ -759,15 +773,15 @@ C    9   21</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>combined <span class="sc">|&gt;</span> </span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id, origin) <span class="sc">|&gt;</span></span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score), <span class="at">sd =</span> <span class="fu">sd</span>(score)) <span class="sc">|&gt;</span></span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(origin, ave_score, </span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">ymin=</span>ave_score<span class="dv">-2</span><span class="sc">*</span>sd, <span class="at">ymax=</span>ave_score<span class="sc">+</span><span class="dv">2</span><span class="sc">*</span>sd)) <span class="sc">+</span> </span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span></span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>id, <span class="at">labeller =</span> label_both)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>combined <span class="sc">|&gt;</span> </span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id, origin) <span class="sc">|&gt;</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score), <span class="at">sd =</span> <span class="fu">sd</span>(score)) <span class="sc">|&gt;</span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(origin, ave_score, </span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">ymin=</span>ave_score<span class="dv">-2</span><span class="sc">*</span>sd, <span class="at">ymax=</span>ave_score<span class="sc">+</span><span class="dv">2</span><span class="sc">*</span>sd)) <span class="sc">+</span> </span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>id, <span class="at">labeller =</span> label_both)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="tidy-intro-talk_files/figure-html/match-overlap-plot-1.png" class="img-fluid" width="672"></p>
 </div>

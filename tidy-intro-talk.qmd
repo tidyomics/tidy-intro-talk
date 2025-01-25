@@ -26,20 +26,21 @@ with GitHub Projects. For more:
 
 ![](figures/tidyomics_community.png){fig-alt="Diagram of tidyomics community, with users and developers interacting. On the top are users with arrows coming from developers and packages. On the bottom is the extended community, including Bioconductor."}
 
-# Keep data organized in objects
+# Keep data organized in *objects*
 
 -   We typically have more information than just a matrix
 
 -   Row and column information (on features and samples)
 
+-   Annotated matrix data, see also in python `xarray`, `AnnData`
+
 -   Metadata on organism, genome build, annotation release, etc.
 
--   Keeping this information altogether is the motivation for *data
-    objects*
+-   Bioconductor S4: 2002: *ExpressionSet*; 2011: *SummarizedExperiment*
 
--   Many functions in Bioconductor are *endomorphic* meaning that an
-    object is passed in, some data may be added/modified, then the
-    object is passed back out
+-   Many functions in Bioconductor are *endomorphic*: `x |> f -> x`
+
+---
 
 I will first introduce one of the main data objects in Bioconductor,
 the *SummarizedExperiment*.
@@ -117,7 +118,7 @@ different genome builds: will result in an error.
 
 ```{r}
 slotNames(se)
-methods(class = class(se))
+methods(class = class(se)) |> head(10)
 ```
 
 ## Many beginners know `dplyr`/`ggplot2`
@@ -187,7 +188,7 @@ se |>
   ylim(0,200)
 ```
 
-## Also works with Seurat and SCE
+## Works with Seurat and SCE
 
 *SingleCellExperiment* = *SummarizedExperiment* with extra bells and
 whistles for single cells. E.g. slots for reduced dimensions.
@@ -206,7 +207,7 @@ sce |>
   scale_color_gradient2(trans="log10")
 ```
 
-# Efficient operation on SE with `plyxp`
+# New: Efficient operation on SE with `plyxp`
 
 ```{r}
 #| echo: false
@@ -249,9 +250,19 @@ summed
 assay(summed)
 ```
 
+```{r}
+class(xp)
+colData(xp)
+xp |> se()
+```
+
 # Computing on genomic ranges with tidy grammar
 
-* put something here about that
+Nontrivial to translate biological or biomedical questions about the 
+genome into code. The tidy grammar helps in this case with familiar
+concepts of filters, joins, grouping, mutation, or summarization.
+
+![](figures/fillingthegaps.png){fig-alt="Source: 'Filling the Gaps', T2T Consoritium, Science."}
 
 ## Genomic overlap as a `join`
 
