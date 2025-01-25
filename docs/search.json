@@ -7,34 +7,6 @@
     "text": "An open, open-source project spanning multiple R packages, and developers from around the world. Organized as a GitHub organization with GitHub Projects. For more:\n\nhttps://github.com/tidyomics\nhttps://www.biorxiv.org/content/10.1101/2023.09.10.557072v2\ntidiness_in_bioc channel in Bioconductor Slack"
   },
   {
-    "objectID": "tidy-intro-talk.html#tidyomics-project",
-    "href": "tidy-intro-talk.html#tidyomics-project",
-    "title": "Tidy Intro Talk",
-    "section": "",
-    "text": "An open, open-source project spanning multiple R packages, and developers from around the world. Organized as a GitHub organization with GitHub Projects. For more:\n\nhttps://github.com/tidyomics\nhttps://www.biorxiv.org/content/10.1101/2023.09.10.557072v2\ntidiness_in_bioc channel in Bioconductor Slack"
-  },
-  {
-    "objectID": "tidy-intro-talk.html#diagram-of-tidyomics-workflows",
-    "href": "tidy-intro-talk.html#diagram-of-tidyomics-workflows",
-    "title": "Tidy Intro Talk",
-    "section": "Diagram of tidyomics workflows",
-    "text": "Diagram of tidyomics workflows"
-  },
-  {
-    "objectID": "tidy-intro-talk.html#international-development-team",
-    "href": "tidy-intro-talk.html#international-development-team",
-    "title": "Tidy Intro Talk",
-    "section": "International development team",
-    "text": "International development team"
-  },
-  {
-    "objectID": "tidy-intro-talk.html#objects-keep-data-organized",
-    "href": "tidy-intro-talk.html#objects-keep-data-organized",
-    "title": "Tidy Intro Talk",
-    "section": "Objects keep data organized",
-    "text": "Objects keep data organized\n\nWe typically have more information than just a matrix\nRow and column information (on features and samples)\nMetadata on organism, genome build, annotation release, etc.\nKeeping this information altogether is the motivation for data objects\nMany functions in Bioconductor are endomorphic meaning that an object is passed in, some data may be added/modified, then the object is passed back out\n\nI will first introduce one of the main data objects in Bioconductor, the SummarizedExperiment.\nAfter introducing this, I’ll motivate tidyomics as applied to Bioconductor objects.\nA SummarizedExperiment is built from three tables:\n\nlibrary(SummarizedExperiment)\n# metadata about genes\ngenes &lt;- DataFrame(\n  id = c(\"g1\",\"g2\",\"g3\",\"g4\"), \n  symbol = c(\"ABC\",\"DEF\",\"GHI\",\"JKL\")\n  )\ngenes\n\nDataFrame with 4 rows and 2 columns\n           id      symbol\n  &lt;character&gt; &lt;character&gt;\n1          g1         ABC\n2          g2         DEF\n3          g3         GHI\n4          g4         JKL\n\n\n\n# metadata about samples\nsamples &lt;- DataFrame(\n  sample = c(\"s1\",\"s2\",\"s3\",\"s4\"),\n  condition = c(\"x\",\"y\",\"x\",\"y\"),\n  sex = c(\"m\",\"m\",\"f\",\"f\")\n  )\nsamples\n\nDataFrame with 4 rows and 3 columns\n       sample   condition         sex\n  &lt;character&gt; &lt;character&gt; &lt;character&gt;\n1          s1           x           m\n2          s2           y           m\n3          s3           x           f\n4          s4           y           f\n\n\n\nset.seed(123) # some random count data\ncounts &lt;- matrix(rpois(16, lambda=100), ncol=4)\nrownames(counts) &lt;- genes$id\ncolnames(counts) &lt;- samples$sample\ncounts\n\n    s1  s2  s3  s4\ng1  94 117 112  94\ng2 111 104 103 112\ng3  83  87 104 108\ng4 101  82 101  99\n\n\n\nse &lt;- SummarizedExperiment(\n  assays = list(counts = counts),\n  rowData = genes, \n  colData = samples,\n  metadata = list(organism=\"Hsapiens\")\n  )\nse\n\nclass: SummarizedExperiment \ndim: 4 4 \nmetadata(1): organism\nassays(1): counts\nrownames(4): g1 g2 g3 g4\nrowData names(2): id symbol\ncolnames(4): s1 s2 s3 s4\ncolData names(3): sample condition sex"
-  },
-  {
     "objectID": "tidy-intro-talk.html#avoid-common-bookkeeping-errors",
     "href": "tidy-intro-talk.html#avoid-common-bookkeeping-errors",
     "title": "Tidy Intro Talk",
@@ -77,18 +49,11 @@
     "text": "We can use familiar dplyr verbs\n\nse |&gt; \n  filter(condition == \"x\")\n\n# A SummarizedExperiment-tibble abstraction: 8 × 8\n# Features=4 | Samples=2 | Assays=counts\n  .feature .sample counts sample condition sex   id    symbol\n  &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; \n1 g1       s1          94 s1     x         m     g1    ABC   \n2 g2       s1         111 s1     x         m     g2    DEF   \n3 g3       s1          83 s1     x         m     g3    GHI   \n4 g4       s1         101 s1     x         m     g4    JKL   \n5 g1       s3         112 s3     x         f     g1    ABC   \n6 g2       s3         103 s3     x         f     g2    DEF   \n7 g3       s3         104 s3     x         f     g3    GHI   \n8 g4       s3         101 s3     x         f     g4    JKL   \n\n\n\nse_sub &lt;- se |&gt; \n  filter(condition == \"x\")\ncolData(se_sub)\n\nDataFrame with 2 rows and 3 columns\n        sample   condition         sex\n   &lt;character&gt; &lt;character&gt; &lt;character&gt;\ns1          s1           x           m\ns3          s3           x           f"
   },
   {
-    "objectID": "tidy-intro-talk.html#facilitates-quick-exploration",
-    "href": "tidy-intro-talk.html#facilitates-quick-exploration",
-    "title": "Tidy Intro Talk",
-    "section": "Facilitates quick exploration",
-    "text": "Facilitates quick exploration\n\nlibrary(ggplot2)\nse |&gt; \n  filter(.feature %in% c(\"g1\",\"g2\")) |&gt; \n  ggplot(aes(condition, counts, color=sex, group=sex)) + \n  geom_point(size=2) + \n  geom_line() +\n  facet_wrap(~.feature) +\n  ylim(0,200)\n\n\n\n\n\n# suppose we had gene groups\nrowData(se)$gene_group &lt;- c(1,1,2,2)\nse |&gt; \n  group_by(gene_group, condition, sex) |&gt; \n  summarize(ave_count = mean(counts), sd_count = sd(counts)) |&gt; \n  ggplot(aes(condition, ave_count, \n             ymin=ave_count - 2*sd_count, \n             ymax=ave_count + 2*sd_count,\n             color=sex, group=sex)) + \n  geom_pointrange(position = position_dodge(width = .25)) + \n  facet_wrap(~gene_group, labeller = \"label_both\") +\n  ylim(0,200)\n\ntidySummarizedExperiment says: A data frame is returned for independent data analysis.\n\n\n\n\n\nWe can mutate assay data, row data, or column data by modifying existing columns. If we want to add new data to rows or columns, e.g. row summaries, a fast way to do this is mutate_features (or mutate_samples for columns). These convenience functions are added in the devel branch in Summer 2024, and available with install_github.\n\nse %&gt;%\n  mutate_features(row_vars = rowVars(assay(.))) |&gt;\n  filter(row_vars &gt; 100)\n\n# A SummarizedExperiment-tibble abstraction: 8 × 10\n# Features=2 | Samples=4 | Assays=counts\n  .feature .sample counts sample condition sex   id    symbol gene_group row_vars\n  &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;\n1 g1       s1          94 s1     x         m     g1    ABC             1     144.\n2 g3       s1          83 s1     x         m     g3    GHI             2     152.\n3 g1       s2         117 s2     y         m     g1    ABC             1     144.\n4 g3       s2          87 s2     y         m     g3    GHI             2     152.\n5 g1       s3         112 s3     x         f     g1    ABC             1     144.\n6 g3       s3         104 s3     x         f     g3    GHI             2     152.\n7 g1       s4          94 s4     y         f     g1    ABC             1     144.\n8 g3       s4         108 s4     y         f     g3    GHI             2     152."
-  },
-  {
     "objectID": "tidy-intro-talk.html#also-works-with-seurat-and-sce",
     "href": "tidy-intro-talk.html#also-works-with-seurat-and-sce",
     "title": "Tidy Intro Talk",
     "section": "Also works with Seurat and SCE",
-    "text": "Also works with Seurat and SCE\nSingleCellExperiment = SummarizedExperiment with extra bells and whistles for single cells. E.g. slots for reduced dimensions.\n\nlibrary(tidySingleCellExperiment)\nlibrary(scales)\n# data from tidyomics/tidyomicsWorkshopBioc2023\nsce &lt;- readRDS(\"data/tidyomicsWorkshopSCE.rds\")\n# SCE is slightly different than SE, more cell focused\nsce |&gt;\n  filter(Phase == \"G1\") |&gt;\n  ggplot(aes(UMAP_1, UMAP_2, color=nCount_RNA)) +\n  geom_point() + \n  scale_color_gradient2(trans=\"log10\")\n\n\n\n\n\n# can include and compute on gene expression values\nsce |&gt;\n  join_features(c(\"CD3D\",\"TRDC\"), shape=\"wide\") |&gt;\n  select(.cell, CD3D, TRDC)\n\n# A SingleCellExperiment-tibble abstraction: 3,580 × 5\n# \u001b[90mFeatures=482 | Cells=3580 | Assays=counts, logcounts\u001b[0m\n   .cell                 CD3D  TRDC UMAP_1 UMAP_2\n   &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;\n 1 1_AAATGGACAAGTTCGT-1 1.39   1.10 -3.73  -1.59 \n 2 1_AACAAGAGTGTTGAGG-1 0      0     0.798 -0.151\n 3 1_AACGTCAGTCTATGAC-1 1.10   0    -0.292  0.515\n 4 1_AACTTCTCACGCTGAC-1 1.10   0     0.372  2.34 \n 5 1_AAGTCGTGTGTTGCCG-1 0      0    -1.63  -0.236\n 6 1_AATGAAGCATCCAACA-1 0      0     0.822  2.90 \n 7 1_ACAAAGAGTCGTACTA-1 0.693  0     3.28   3.97 \n 8 1_ACACGCGCAGGTACGA-1 1.10   0    -3.65  -0.192\n 9 1_ACATGCATCACTTTGT-1 0      0    -0.273  4.09 \n10 1_ACGATCATCGACGAGA-1 0.693  1.10 -0.816  2.90 \n# ℹ 3,570 more rows\n\n\n\n# process the sample ID from the filename\nsce &lt;- sce |&gt;\n  extract(file, \"sample\", \"../data/.*/([a-zA-Z0-9_-]+)/outs.+\")\nsce |&gt;\n  select(sample)\n\ntidySingleCellExperiment says: Key columns are missing. A data frame is returned for independent data analysis.\n\n\n# A tibble: 3,580 × 1\n   sample  \n   &lt;chr&gt;   \n 1 SI-GA-H1\n 2 SI-GA-H1\n 3 SI-GA-H1\n 4 SI-GA-H1\n 5 SI-GA-H1\n 6 SI-GA-H1\n 7 SI-GA-H1\n 8 SI-GA-H1\n 9 SI-GA-H1\n10 SI-GA-H1\n# ℹ 3,570 more rows\n\n# aggregate across sample = pseudobulking, returns SE\nsce |&gt;\n  aggregate_cells(sample)\n\n# A SummarizedExperiment-tibble abstraction: 4,820 × 9\n# Features=482 | Samples=10 | Assays=counts, logcounts\n   .feature   .sample  counts logcounts .aggregated_cells sample   batch BCB    treatment\n   &lt;chr&gt;      &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;             &lt;int&gt; &lt;chr&gt;    &lt;fct&gt; &lt;fct&gt;  &lt;chr&gt;    \n 1 ABCC3      SI-GA-E5      0     0                   238 SI-GA-E5 2     BCB097 treated  \n 2 AC004585.1 SI-GA-E5      6     4.16                238 SI-GA-E5 2     BCB097 treated  \n 3 AC005480.1 SI-GA-E5      0     0                   238 SI-GA-E5 2     BCB097 treated  \n 4 AC007952.4 SI-GA-E5     11     7.62                238 SI-GA-E5 2     BCB097 treated  \n 5 AC012615.2 SI-GA-E5      0     0                   238 SI-GA-E5 2     BCB097 treated  \n 6 AC020656.1 SI-GA-E5      0     0                   238 SI-GA-E5 2     BCB097 treated  \n 7 AC021739.4 SI-GA-E5      0     0                   238 SI-GA-E5 2     BCB097 treated  \n 8 AC026979.2 SI-GA-E5      8     5.55                238 SI-GA-E5 2     BCB097 treated  \n 9 AC046158.1 SI-GA-E5      0     0                   238 SI-GA-E5 2     BCB097 treated  \n10 AC055713.1 SI-GA-E5      1     0.693               238 SI-GA-E5 2     BCB097 treated  \n# ℹ 40 more rows"
+    "text": "Also works with Seurat and SCE\nSingleCellExperiment = SummarizedExperiment with extra bells and whistles for single cells. E.g. slots for reduced dimensions.\n\nlibrary(tidySingleCellExperiment)\nlibrary(scales)\n# data from tidyomics/tidyomicsWorkshopBioc2023\nsce &lt;- readRDS(\"data/tidyomicsWorkshopSCE.rds\")\n# SCE is slightly different than SE, more cell focused\nsce |&gt;\n  filter(Phase == \"G1\") |&gt;\n  ggplot(aes(UMAP_1, UMAP_2, color=nCount_RNA)) +\n  geom_point() + \n  scale_color_gradient2(trans=\"log10\")"
   },
   {
     "objectID": "tidy-intro-talk.html#genomic-overlap-as-a-join",
@@ -133,6 +98,13 @@
     "text": "Limitations\n\npackage code and non-standard evaluation\noptimized code, e.g. matrix operations"
   },
   {
+    "objectID": "tidy-intro-talk.html#how-to-contribute",
+    "href": "tidy-intro-talk.html#how-to-contribute",
+    "title": "Tidy Intro Talk",
+    "section": "How to contribute",
+    "text": "How to contribute\n\nhttps://github.com/tidyomics, read docs, see open challenges\nMotivation: https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2\ntidiness_in_bioc channel in Bioconductor Slack"
+  },
+  {
     "objectID": "tidy-intro-talk.html#outro",
     "href": "tidy-intro-talk.html#outro",
     "title": "Tidy Intro Talk",
@@ -144,7 +116,7 @@
     "href": "tidy-intro-talk.html#contributors",
     "title": "Tidy Intro Talk",
     "section": "Contributors",
-    "text": "Contributors\n\nStefano Mangiola (tidyomics leadership, tidy expression, single cell, spatial)\nEric Davis, Wancen Mu, Doug Phanstiel (nullranges)\nStuart Lee, Michael Lawrence, Di Cook (plyranges)\n\nAnd tidyomics developers: William Hutchison, Timothy Keyes, Helena Crowell, Jacques Serizay, Charlotte Soneson, Eric Davis, Noriaki Sato, Lambda Moses, Boyd Tarlinton, Abdullah Nahid, Miha Kosmac, Quentin Clayssen, Victor Yuan, Wancen Mu, Ji-Eun Park, Izabela Mamede, Min Hyung Ryu, Pierre-Paul Axisa, Paulina Paiz, Chi-Lam Poon, Ming Tang"
+    "text": "Contributors\n\nStefano Mangiola (tidyomics leadership, tidy expression, single cell, spatial)\nJustin Landis (plyxp)\nEric Davis, Wancen Mu, Doug Phanstiel (nullranges)\nStuart Lee, Michael Lawrence, Di Cook (plyranges)\n\nAnd tidyomics developers: William Hutchison, Timothy Keyes, Helena Crowell, Jacques Serizay, Charlotte Soneson, Eric Davis, Noriaki Sato, Lambda Moses, Boyd Tarlinton, Abdullah Nahid, Miha Kosmac, Quentin Clayssen, Victor Yuan, Wancen Mu, Ji-Eun Park, Izabela Mamede, Min Hyung Ryu, Pierre-Paul Axisa, Paulina Paiz, Chi-Lam Poon, Ming Tang"
   },
   {
     "objectID": "tidy-intro-talk.html#funding",
