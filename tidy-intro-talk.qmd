@@ -1,59 +1,75 @@
 ---
-title: "Tidy Intro Talk"
-author: "Michael Love"
-format: html
-highlight-style: oblivion
-editor: visual
+title: "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data"
+author:
+  - name: "Michael Love"
+    affiliation: "Biostatistics & Genetics, UNC-Chapel Hill"
+format: revealjs
+self-contained: false
+include-in-header:
+  - text: |
+      <style>
+      #title-slide .title {
+        font-size: 1.5em
+      }
+      </style>
 ---
 
-# Tidyomics project
+## Tidyomics project
 
 An open, open-source project spanning multiple R packages, and
-developers from around the world. Organized as a GitHub organization
-with GitHub Projects. For more:
+developers from around the world. Operates within the Bioconductor
+Project, with separate funding and organization. Coordination of
+development via GitHub Projects.
 
 -   <https://github.com/tidyomics>
 
--   <https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2>
+-   [Announcement
+    paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2)
 
 -   `tidiness_in_bioc` channel in Bioconductor Slack
 
 ## Diagram of tidyomics workflows
 
-![](figures/figure2.png){fig-alt="Diagram of how packages share a similar grammar to operate on data objects. From top to bottom, the data are analyzed, manipulated, and made into plots."}
+![](figures/figure2.png){fig-align="center"
+fig-alt="Diagram of how packages share a similar grammar to operate on data objects. From top to bottom, the data are analyzed, manipulated, and made into plots."}
 
 ## International development team
 
-![](figures/tidyomics_community.png){fig-alt="Diagram of tidyomics community, with users and developers interacting. On the top are users with arrows coming from developers and packages. On the bottom is the extended community, including Bioconductor."}
+![](figures/tidyomics_community.png){fig-align="center" width="300"
+fig-alt="Diagram of tidyomics community, with users and developers interacting. On the top are users with arrows coming from developers and packages. On the bottom is the extended community, including Bioconductor."}
 
-# Keep data organized in *objects*
+## Keep data organized in *objects*
 
 -   We typically have more information than just a matrix
 
 -   Row and column information (on features and samples)
 
--   Annotated matrix data, see also in python `xarray`, `AnnData`
+-   Annotated matrix data, i.e. python's `xarray`, `AnnData`
 
--   Metadata on organism, genome build, annotation release, etc.
+-   Metadata: organism, genome build, annotation release
 
--   Bioconductor S4: 2002: *ExpressionSet*; 2011: *SummarizedExperiment*
+-   2002: *ExpressionSet*; 2011: *SummarizedExperiment*
 
--   Many functions in Bioconductor are *endomorphic*: `x |> f -> x`
+-   *Endomorphic functions*: `x |> f -> x`
 
----
+## SummarizedExperiment, "SE"
 
-I will first introduce one of the main data objects in Bioconductor,
-the *SummarizedExperiment*.
-
-After introducing this, I'll motivate `tidyomics` as applied to
-Bioconductor objects.
-
-A *SummarizedExperiment* is built from three tables:
+A *SummarizedExperiment* is annotated matrix data:
 
 ```{r}
 #| message: false
 library(SummarizedExperiment)
-# metadata about genes
+set.seed(123) # some random count data
+counts <- matrix(rpois(16, lambda=100), ncol=4)
+rownames(counts) <- c("g1","g2","g3","g4")
+colnames(counts) <- c("s1","s2","s3","s4")
+counts
+```
+
+## Row data
+
+```{r}
+# metadata about genes (rows)
 genes <- DataFrame(
   id = c("g1","g2","g3","g4"), 
   symbol = c("ABC","DEF","GHI","JKL")
@@ -61,8 +77,10 @@ genes <- DataFrame(
 genes
 ```
 
+## Column data
+
 ```{r}
-# metadata about samples
+# metadata about samples (columns)
 samples <- DataFrame(
   sample = c("s1","s2","s3","s4"),
   condition = c("x","y","x","y"),
@@ -71,13 +89,7 @@ samples <- DataFrame(
 samples
 ```
 
-```{r}
-set.seed(123) # some random count data
-counts <- matrix(rpois(16, lambda=100), ncol=4)
-rownames(counts) <- genes$id
-colnames(counts) <- samples$sample
-counts
-```
+## Assembled object
 
 ```{r}
 se <- SummarizedExperiment(
@@ -89,7 +101,7 @@ se <- SummarizedExperiment(
 se
 ```
 
-## Avoid common bookkeeping errors
+## Avoids common bookkeeping errors
 
 Reordering samples (columns) is a global operation:
 
@@ -167,7 +179,7 @@ se_sub <- se |>
 colData(se_sub)
 ```
 
-# Facilitates quick exploration
+## Facilitates quick exploration
 
 ```{r}
 #| message: false
@@ -194,12 +206,10 @@ se |>
 whistles for single cells. E.g. slots for reduced dimensions.
 
 ```{r umap}
-#| message: false
+#| eval: false
 library(tidySingleCellExperiment)
 library(scales)
-# data from tidyomics/tidyomicsWorkshopBioc2023
 sce <- readRDS("data/tidyomicsWorkshopSCE.rds")
-# SCE is slightly different than SE, more cell focused
 sce |>
   filter(Phase == "G1") |>
   ggplot(aes(UMAP_1, UMAP_2, color=nCount_RNA)) +
@@ -207,7 +217,9 @@ sce |>
   scale_color_gradient2(trans="log10")
 ```
 
-# New: Efficient operation on SE with `plyxp`
+![](figures/umap-1.png)
+
+## Efficient operation on SE with `plyxp`
 
 ```{r}
 #| echo: false
@@ -256,9 +268,9 @@ colData(xp)
 xp |> se()
 ```
 
-# Computing on genomic ranges with tidy grammar
+## Computing on genomic ranges with tidy grammar
 
-Nontrivial to translate biological or biomedical questions about the 
+Nontrivial to translate biological or biomedical questions about the
 genome into code. The tidy grammar helps in this case with familiar
 concepts of filters, joins, grouping, mutation, or summarization.
 
@@ -323,9 +335,11 @@ y |>
   join_nearest(x, distance=TRUE)
 ```
 
-# Assess overlap significance using a tidy grammar
+## Assess overlap significance using a tidy grammar
 
-## `nullranges`
+something
+
+## nullranges for defining null genomic range sets
 
 We developed a package
 [nullranges](https://nullranges.github.io/nullranges), as a modular
@@ -410,7 +424,9 @@ These are published as Application Notes:
 
 -   [matchRanges](https://doi.org/10.1093/bioinformatics/btad197)
 
-# Current state and future directions
+## Current state and future directions
+
+something
 
 ## What has been implemented
 
@@ -435,16 +451,18 @@ These are published as Application Notes:
 
 -   <https://github.com/tidyomics>, read docs, see open challenges
 
--   Motivation: <https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2>
+-   Motivation:
+    <https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2>
 
 -   `tidiness_in_bioc` channel in Bioconductor Slack
 
 ## Outro
 
-Recommend genomic data analysts are always checking:
+Omics data analysis means looking at:
 
 -   main contributions to variance (e.g. PCA, see `plotPCA` for bulk
-    and [OSCA](https://bioconductor.org/books/release/OSCA/) for sc)
+    and [OSCA](https://bioconductor.org/books/release/OSCA/) for sc),
+    also `variancePartition`
 -   column and row densities (`tidySE` allows directly plotting
     `geom_density` of rows/columns, or `geom_violin`)
 -   known positive features, feature-level plots (`filter` to feature,
@@ -460,7 +478,7 @@ this online book:
 
 -   Stefano Mangiola (*tidyomics* leadership, tidy expression, single
     cell, spatial)
-    
+
 -   Justin Landis (*plyxp*)
 
 -   Eric Davis, Wancen Mu, Doug Phanstiel (*nullranges*)
