@@ -8,12 +8,15 @@ format:
     theme: simple
     slideNumber: true
     self-contained: false
-    highlight-style: github
+    highlight-style: arrow
 include-in-header:
   - text: |
       <style>
       #title-slide .title {
         font-size: 1.5em
+      }
+      .cell-output {
+        margin-top: 20px;
       }
       </style>
 ---
@@ -30,7 +33,64 @@ development via GitHub Projects.
 -   [Announcement
     paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2)
 
--   `tidiness_in_bioc` channel in Bioconductor Slack
+-   `#tidiness_in_bioc` channel in Bioconductor Slack
+
+## What is "tidy data"
+
+-   One row per observation, one column per variable.
+
+-   Genomic regions (BED) already in this format.
+
+-   Matrices and annotated matrices are not.
+
+## A grammar of data manipulation
+
+```{=html}
+<style>
+  .small-text ul {
+    font-size: 0.8em;
+  }
+</style>
+```
+
+In the R package *dplyr*:
+
+::: small-text
+-   `mutate()` adds new variables that are functions of existing
+    variables.
+-   `select()` picks variables based on their names.
+-   `filter()` picks cases based on their values.
+-   `slice()` picks cases based on their position.
+-   `summarize()` reduces multiple values down to a single summary.
+-   `arrange()` changes the ordering of the rows.
+-   `group_by()` perform any operation by group.
+:::
+
+<https://dplyr.tidyverse.org/>
+
+## The pipe
+
+``` bash
+command | command | command > output.txt
+```
+
+> "Pipes rank alongside the hierarchical file system and regular
+> expressions as one of the most powerful yet elegant features of
+> Unix-like operating systems."
+
+<http://www.linfo.org/pipe.html>
+
+In R we use `%>%` or `|>` instead of `|` to chain operations.
+
+## Tidyomics = *dplyr* verbs applied to omics
+
+-   Genomic regions (called "ranges")
+
+-   Matrix data, e.g. gene expression over samples or cells
+
+-   Genomic interactions, e.g. DNA loops
+
+-   And more...
 
 ## Diagram of tidyomics workflows
 
@@ -78,26 +138,26 @@ counts <- matrix(
 counts
 ```
 
-## Row data
+## Row data and column data
+
+metadata about genes (rows)
 
 ```{r}
-# metadata about genes (rows)
 genes <- DataFrame(
   id = c("g1","g2","g3","g4"), 
   symbol = c("ABC","DEF","GHI","JKL")
-  )
+)
 genes
 ```
 
-## Column data
+metadata about samples (columns)
 
 ```{r}
-# metadata about samples (columns)
 samples <- DataFrame(
   sample = c("s1","s2","s3","s4"),
   condition = c("x","y","x","y"),
   sex = c("m","m","f","f")
-  )
+)
 samples
 ```
 
@@ -110,13 +170,13 @@ se <- SummarizedExperiment(
   rowData = genes, 
   colData = samples,
   metadata = list(organism="Hsapiens")
-  )
+)
 se
 ```
 
 ## Deals with bookkeeping issues
 
-Reordering samples (columns) is a global operation:
+Reordering columns propagates to `assay` and `colData`:
 
 ```{r}
 #| echo: true
@@ -127,7 +187,7 @@ colData(se2)
 
 ## Deals with bookkeeping issues
 
-Assignment that might result in sample swap results in an error:
+Assignment with conflicting metadata gives an error:
 
 ```{r}
 #| echo: true
@@ -140,23 +200,26 @@ assay(se2) <- counts
 # identical to those of the receiving  SummarizedExperiment object 'x'
 ```
 
--   Other such validity checks include comparison of genomic ranges
-    across different genome builds.
+-   Other such validity checks include comparison across *different
+    genome builds*.
 
--   Will result in an error.
+-   Errors triggered by metadata better than silent errors!
 
-## Can be a lot for new users
+## Can be hard for new users
 
 ```{r}
+#| echo: true
 slotNames(se)
-methods(class = class(se)) |> head(10)
+methods(class = class(se)) |> head()
 ```
 
-So while an advanced R/Bioconductor user should learn these methods,
-maybe not needed to immediately explore or visualize data, make basic
-data summaries.
+-   An advanced R/Bioconductor user should eventually learn these
+    methods.
 
-## Beginners know `dplyr` & `ggplot2`
+-   Not needed to explore or visualize data, or make basic data
+    summaries.
+
+## Beginners know *dplyr* & *ggplot2*
 
 ```{r}
 #| echo: true
@@ -168,7 +231,9 @@ samples |>
   filter(condition == "x")
 ```
 
-## Enabling dplyr verbs for omics
+## Enabling *dplyr* verbs for omics
+
+Printing says: "*SummarizedExperiment-tibble abstraction*"
 
 ```{r}
 #| echo: true
@@ -177,12 +242,9 @@ library(tidySummarizedExperiment)
 se
 ```
 
-What does this mean "*SE-tibble abstraction*"?
-
 ## Tidyomics is an API
 
-We can use our familiar verbs and interact with the native
-Bioconductor object using standard R/Bioconductor methods.
+Interact with native objects using standard R/Bioc methods.
 
 ![](figures/counter.png){fig-alt="Counter with a menu and a bell"
 fig-align="center"}
@@ -190,7 +252,7 @@ fig-align="center"}
 ## Still a standard Bioc object
 
 ```{r}
-#| echo: false
+#| echo: true
 class(se)
 dim(se)
 ```
@@ -207,9 +269,9 @@ se |>
 
 ```{r}
 #| echo: true
-se_sub <- se |> 
-  filter(condition == "x")
-colData(se_sub)
+se |> 
+  filter(condition == "x") |>
+  colData(se_sub)
 ```
 
 ## Facilitates quick exploration
@@ -227,15 +289,14 @@ theme_set(theme_grey(base_size = 16))
 #| fig-align: center
 library(ggplot2)
 se |> 
-  filter(.feature %in% c("g1","g2")) |> 
+  filter(.feature %in% c("g1","g2")) |> # `.feature` a special name
   ggplot(aes(condition, counts, color=sex, group=sex)) + 
-  geom_point(size=2) + geom_line() +
-  facet_wrap(~.feature) + ylim(0,200)
+  geom_point(size=2) + geom_line() + facet_wrap(~.feature)
 ```
 
 ## Seurat and SingleCellExperiment
 
-*SingleCellExperiment* = *SE* with slots for e.g. reduced dimensions.
+*SingleCellExperiment* has slots for e.g. reduced dimensions.
 
 ```{r}
 #| eval: false
@@ -258,6 +319,10 @@ sce |>
 
 ## Efficient operation on SE with `plyxp`
 
+more here...
+
+## Suppose the following SE object
+
 ```{r}
 #| echo: false
 #| message: false
@@ -271,16 +336,14 @@ simple <- SummarizedExperiment(
 )
 ```
 
-## Efficient operation on SE with `plyxp`
-
 ```{r}
 #| echo: true
 assay(simple)
-colData(simple)
-rowData(simple)
+colData(simple) |> as.data.frame()
+rowData(simple) |> as.data.frame()
 ```
 
-## Specifying \`plyxp\` methods
+## Trigger methods with `new_plyxp()`
 
 ```{r}
 #| echo: true
@@ -299,6 +362,10 @@ xp |>
   mutate(norm_counts = counts / .rows$length)
 ```
 
+## What was that `.rows$` doing?
+
+show image here
+
 ## Grammar for group and summarize
 
 ```{r}
@@ -310,19 +377,26 @@ summed
 assay(summed)
 ```
 
-## Unspecifying `plyxp`
+## The `plyxp` class
+
+A simple wrapper of SE:
 
 ```{r}
 #| echo: true
 class(xp)
 colData(xp)
+```
+
+## Unwrapping `plyxp`
+
+```{r}
+#| echo: true
 xp |> se()
 ```
 
 ## Computing on genomic ranges
 
--   Translate biological or biomedical questions about the genome into
-    code.
+-   Translate biological questions about the genome into code.
 
 -   Leverage familiar concepts of filters, joins, grouping, mutation,
     or summarization.
@@ -332,7 +406,8 @@ fig-align="center"}
 
 ## Genomic overlap as a join
 
-![](figures/woodjoin.png){fig-alt="Interwoven stacks of wood"}
+![](figures/woodjoin.png){fig-alt="Interwoven stacks of wood"
+fig-align="center"}
 
 ```{r}
 #| echo: false
@@ -346,7 +421,7 @@ x <- data.frame(seqnames=1, start=round(runif(n, 101, 996)),
   sort()
 seqlengths(x) <- 1000
 y <- data.frame(seqnames=1, start=c(101, 451, 801), 
-                width=200, id = c("a","b","c")) |>
+                width=200, id = factor(c("a","b","c"))) |>
   as_granges()
 ```
 
@@ -373,13 +448,10 @@ y
 x |> join_overlap_inner(y)
 ```
 
-## Options
-
-`directed`, `within`, `maxgap`, `minoverlap`, etc.
+## Chaining operations
 
 ```{r}
 #| echo: true
-# chaining operations
 x |>
   filter(score > 3.5) |>
   join_overlap_inner(y) |>
@@ -387,12 +459,13 @@ x |>
   summarize(ave_score = mean(score), n = n())
 ```
 
+Options: `directed`, `within`, `maxgap`, `minoverlap`, etc.
+
 ## Pipe to plot
 
 ```{r ranges-plot}
 #| echo: true
 #| fig-align: center
-# pipe to plot
 x |>
   filter(score > 3.5) |>
   join_overlap_inner(y) |>
@@ -405,10 +478,9 @@ x |>
 
 ```{r}
 #| echo: true
-# many convenience functions
 y |> 
   anchor_5p() |> # 5', 3', start, end, center
-  mutate(width=2) |>
+  mutate(width=1) |>
   join_nearest(x, distance=TRUE)
 ```
 
@@ -418,12 +490,15 @@ something here
 
 ## Defining null genomic range sets
 
--   We developed a package
-    [nullranges](https://nullranges.github.io/nullranges), as a
-    modular tool to assist with making genomic comparisons.
+-   We developed a package,
+    [nullranges](https://nullranges.github.io/nullranges), a modular
+    tool to assist with making genomic comparisons.
 
--   No enrichment analysis but provides null genomic range sets for
-    investigating various hypotheses.
+-   Only provides null genomic range sets for investigating various
+    hypotheses.
+
+-   Doesn't do enrichment analysis per se, but can be combined with
+    `plyranges`
 
 ## Bootstrapping ranges
 
@@ -444,7 +519,7 @@ boot <- bootRanges(x, blockLength=10, R=20)
 # keep track of bootstrap iteration, gives boot dist'n
 boot |>
   join_overlap_inner(y) |>
-  group_by(iter, id) |>
+  group_by(iter, id) |> # bootstrap iter, range id
   summarize(n_overlaps = n())
 ```
 
@@ -455,7 +530,7 @@ boot |>
 #| fig-align: center
 boot |>
   join_overlap_inner(y) |>
-  group_by(iter, id) |>
+  group_by(iter, id) |> # bootstrap iter, range id
   summarize(n_overlaps = n()) |>
   as_tibble() |>
   ggplot(aes(x = id, y = n_overlaps)) + 
@@ -472,27 +547,42 @@ fig-align="center"}
 
 ## matchRanges
 
+```{r}
+#| echo: true
+xprime <- x |>
+  filter(score > 5) |> # xprime are hi-score
+  mutate(score = rnorm(n(), mean = score, sd = .5)) # jitter data
+```
+
+## matchRanges
+
 ```{r match-covar-plot}
 #| echo: true
 #| fig-align: center
-xprime <- x |>
-  filter(score > 5) |>
-  mutate(score = rnorm(n(), mean = score, sd = .5))
 m <- matchRanges(focal = xprime, pool = x, covar = ~score)
 plotCovariate(m)
 ```
 
-## Group and summarize
+
+## Bind ranges
 
 ```{r}
 #| echo: true
 combined <- bind_ranges(
   focal = xprime,
-  matching = matched(m),
+  matched = matched(m),
   pool = x,
   .id = "origin"
 )
-# now use the different sets for computation:
+```
+
+This is now "tidy data" with the two group concatenated and a new
+metadata column, `origin`. 
+
+## Group and summarize
+
+```{r}
+#| echo: true
 combined |> 
   join_overlap_inner(y) |>
   group_by(id, origin) |>
@@ -517,7 +607,7 @@ combined |>
 
 ## bootRanges and matchRanges methods
 
-These are published as Application Notes:
+Published as Application Notes in 2023:
 
 -   [bootRanges](https://doi.org/10.1093/bioinformatics/btad190)
 
@@ -525,7 +615,9 @@ These are published as Application Notes:
 
 ## Current state and future directions
 
-something
+-   Writing up `plyxp` as an Application Note
+
+-   Have shown it locally and to an industry team
 
 ## What has been implemented
 
@@ -543,56 +635,59 @@ Put people's packages names etc.
 
 -   more to come...
 
-## Limitations
+## Ongoing work
 
--   package code and *non-standard evaluation*
--   optimized code, e.g. matrix operations
+-   Package code and non-standard evaluation (IMO I don't recommend)
+-   Optimized code
+-   Conflicts
 
 ## How to contribute
 
--   <https://github.com/tidyomics>, read docs, see open challenges
+-   <https://github.com/tidyomics> open challenges
 
--   Motivation:
-    <https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2>
+-   For project motivation, read the
+    [paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2)
 
--   `tidiness_in_bioc` channel in Bioconductor Slack
+-   `#tidiness_in_bioc` channel in Bioconductor Slack
 
-## Outro
+-   More complicated use cases: 
+    [Tidy ranges tutorial](https://tidyomics.github.io/tidy-ranges-tutorial)
 
-Omics data analysis means looking at:
+## Omics data analysis requires looking at:
 
 -   main contributions to variance (e.g. PCA, see `plotPCA` for bulk
     and [OSCA](https://bioconductor.org/books/release/OSCA/) for sc),
     also `variancePartition`
--   column and row densities (`tidySE` allows directly plotting
-    `geom_density` of rows/columns, or `geom_violin`)
+-   column and row densities (`geom_density` of select rows/columns, 
+    or `geom_violin`)
 -   known positive features, feature-level plots (`filter` to feature,
     pipe to `geom_point` etc.)
 
-If you're interested in more complicated use cases of `tidyomics` see
-this online book:
+## Acknowledgments
 
--   [Tidy ranges
-    tutorial](https://tidyomics.github.io/tidy-ranges-tutorial)
+```{=html}
+<style>
+  .small-text p {
+    font-size: 0.6em;
+  }
+</style>
+```
 
-## Contributors
-
--   Stefano Mangiola (*tidyomics* leadership, tidy expression, single
-    cell, spatial)
+-   Stefano Mangiola (co-lead, tidySE, tidySCE, spatial)
 
 -   Justin Landis (*plyxp*)
 
 -   Eric Davis, Wancen Mu, Doug Phanstiel (*nullranges*)
 
--   Stuart Lee, Michael Lawrence, Di Cook (*plyranges*)
+-   Stuart Lee, M. Lawrence, D. Cook (*plyranges* developers)
 
-And **tidyomics developers**: William Hutchison, Timothy Keyes, Helena
+::: small-text
+**tidyomics developers**: William Hutchison, Timothy Keyes, Helena
 Crowell, Jacques Serizay, Charlotte Soneson, Eric Davis, Noriaki Sato,
 Lambda Moses, Boyd Tarlinton, Abdullah Nahid, Miha Kosmac, Quentin
 Clayssen, Victor Yuan, Wancen Mu, Ji-Eun Park, Izabela Mamede, Min
 Hyung Ryu, Pierre-Paul Axisa, Paulina Paiz, Chi-Lam Poon, Ming Tang
 
-## Funding
-
 *tidyomics* project funded by an Essential Open Source Software award
 from CZI and Wellcome Trust
+:::
