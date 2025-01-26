@@ -439,13 +439,14 @@ Michael Love
 </section>
 <section id="summarizedexperiment-se" class="slide level2">
 <h2>SummarizedExperiment, “SE”</h2>
-<p>A <em>SummarizedExperiment</em> is annotated matrix data:</p>
+<p>A <em>SummarizedExperiment</em> is annotated matrix data.</p>
+<p>Imagine a matrix of counts:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># some random count data</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a>counts <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rpois</span>(<span class="dv">16</span>, <span class="at">lambda=</span><span class="dv">100</span>), <span class="at">ncol=</span><span class="dv">4</span>)</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">rownames</span>(counts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">colnames</span>(counts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb1-2"><a href="#cb1-2"></a>  <span class="fu">rpois</span>(<span class="dv">16</span>, <span class="at">lambda=</span><span class="dv">100</span>), <span class="at">ncol=</span><span class="dv">4</span>,</span>
+<span id="cb1-3"><a href="#cb1-3"></a>  <span class="at">dimnames=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4"></a>                <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>))</span>
+<span id="cb1-5"><a href="#cb1-5"></a>)</span>
 <span id="cb1-6"><a href="#cb1-6"></a>counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    s1  s2  s3  s4
@@ -487,6 +488,13 @@ g4 101  82 101  99</code></pre>
 <section id="assembled-object" class="slide level2">
 <h2>Assembled object</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>se <span class="ot">&lt;-</span> <span class="fu">SummarizedExperiment</span>(</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="at">assays =</span> <span class="fu">list</span>(<span class="at">counts =</span> counts),</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="at">rowData =</span> genes, </span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="at">colData =</span> samples,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="at">metadata =</span> <span class="fu">list</span>(<span class="at">organism=</span><span class="st">"Hsapiens"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  )</span>
+<span id="cb5-7"><a href="#cb5-7"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SummarizedExperiment 
 dim: 4 4 
@@ -499,10 +507,12 @@ colData names(3): sample condition sex</code></pre>
 </div>
 </div>
 </section>
-<section id="avoids-common-bookkeeping-errors" class="slide level2">
-<h2>Avoids common bookkeeping errors</h2>
+<section id="deals-with-bookkeeping-issues" class="slide level2">
+<h2>Deals with bookkeeping issues</h2>
 <p>Reordering samples (columns) is a global operation:</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>se2 <span class="ot">&lt;-</span> se[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">4</span>)]</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="fu">assay</span>(se2, <span class="st">"counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    s1  s3  s2  s4
 g1  94 112 117  94
@@ -510,6 +520,7 @@ g2 111 103 104 112
 g3  83 104  87 108
 g4 101 101  82  99</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">colData</span>(se2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 4 rows and 3 columns
         sample   condition         sex
@@ -520,11 +531,25 @@ s2          s2           y           m
 s4          s4           y           f</code></pre>
 </div>
 </div>
-<p>Assignment that might result in sample swap results in an error:</p>
-<p>Other such validity checks include comparison of genomic ranges across different genome builds: will result in an error.</p>
 </section>
-<section id="can-be-hard-for-new-users" class="slide level2">
-<h2>Can be hard for new users</h2>
+<section id="deals-with-bookkeeping-issues-1" class="slide level2">
+<h2>Deals with bookkeeping issues</h2>
+<p>Assignment that might result in sample swap results in an error:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">assay</span>(se2) <span class="ot">&lt;-</span> counts</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="co"># Error:</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co"># please use 'assay(x, withDimnames=FALSE)) &lt;- value' or </span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co"># 'assays(x, withDimnames=FALSE)) &lt;- value'</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co"># when the rownames or colnames of the supplied assay(s) are not </span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co"># identical to those of the receiving  SummarizedExperiment object 'x'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>Other such validity checks include comparison of genomic ranges across different genome builds.</p></li>
+<li><p>Will result in an error.</p></li>
+</ul>
+</section>
+<section id="can-be-a-lot-for-new-users" class="slide level2">
+<h2>Can be a lot for new users</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "colData"         "assays"          "NAMES"           "elementMetadata" "metadata"       </code></pre>
@@ -542,10 +567,16 @@ s4          s4           y           f</code></pre>
 [10] "%in%,Vector,ANY-method"                                      </code></pre>
 </div>
 </div>
+<p>So while an advanced R/Bioconductor user should learn these methods, maybe not needed to immediately explore or visualize data, make basic data summaries.</p>
 </section>
-<section id="many-beginners-know-dplyrggplot2" class="slide level2">
-<h2>Many beginners know <code>dplyr</code>/<code>ggplot2</code></h2>
+<section id="beginners-know-dplyr-ggplot2" class="slide level2">
+<h2>Beginners know <code>dplyr</code> &amp; <code>ggplot2</code></h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="co"># filter to samples in condition 'x'</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a>samples <span class="sc">|&gt;</span> </span>
+<span id="cb14-4"><a href="#cb14-4"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb14-5"><a href="#cb14-5"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   sample condition sex  
@@ -558,6 +589,8 @@ s4          s4           y           f</code></pre>
 <section id="enabling-dplyr-verbs-for-omics" class="slide level2">
 <h2>Enabling dplyr verbs for omics</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="fu">library</span>(tidySummarizedExperiment)</span>
+<span id="cb16-2"><a href="#cb16-2"></a>se</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble abstraction: 16 × 8
 # Features=4 | Samples=4 | Assays=counts
@@ -582,9 +615,12 @@ s4          s4           y           f</code></pre>
 </div>
 </div>
 <p>What does this mean “<em>SE-tibble abstraction</em>”?</p>
-<p>Essentially this is an API, we can use our familiar verbs and interact with the native object.</p>
+</section>
+<section id="tidyomics-is-an-api" class="slide level2">
+<h2>Tidyomics is an API</h2>
+<p>We can use our familiar verbs and interact with the native Bioconductor object using standard R/Bioconductor methods.</p>
 
-<img data-src="figures/counter.png" alt="Counter with a menu and a bell" class="r-stretch"></section>
+<img data-src="figures/counter.png" alt="Counter with a menu and a bell" class="r-stretch quarto-figure-center"></section>
 <section id="still-a-standard-bioc-object" class="slide level2">
 <h2>Still a standard Bioc object</h2>
 <div class="cell">
@@ -601,6 +637,8 @@ attr(,"package")
 <section id="we-can-use-familiar-dplyr-verbs" class="slide level2">
 <h2>We can use familiar dplyr verbs</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>se <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble abstraction: 8 × 8
 # Features=4 | Samples=2 | Assays=counts
@@ -616,7 +654,13 @@ attr(,"package")
 8 g4       s3         101 s3     x         f     g4    JKL   </code></pre>
 </div>
 </div>
+</section>
+<section id="we-can-use-familiar-dplyr-verbs-1" class="slide level2">
+<h2>We can use familiar dplyr verbs</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>se_sub <span class="ot">&lt;-</span> se <span class="sc">|&gt;</span> </span>
+<span id="cb22-2"><a href="#cb22-2"></a>  <span class="fu">filter</span>(condition <span class="sc">==</span> <span class="st">"x"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3"></a><span class="fu">colData</span>(se_sub)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 2 rows and 3 columns
         sample   condition         sex
@@ -628,27 +672,41 @@ s3          s3           x           f</code></pre>
 </section>
 <section id="facilitates-quick-exploration" class="slide level2">
 <h2>Facilitates quick exploration</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb24-2"><a href="#cb24-2"></a>se <span class="sc">|&gt;</span> </span>
+<span id="cb24-3"><a href="#cb24-3"></a>  <span class="fu">filter</span>(.feature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb24-4"><a href="#cb24-4"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(condition, counts, <span class="at">color=</span>sex, <span class="at">group=</span>sex)) <span class="sc">+</span> </span>
+<span id="cb24-5"><a href="#cb24-5"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>.feature) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">200</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
-<img data-src="tidy-intro-talk_files/figure-revealjs/ggplot-1.png" width="960" class="r-stretch"></section>
-<section id="works-with-seurat-and-sce" class="slide level2">
-<h2>Works with Seurat and SCE</h2>
-<p><em>SingleCellExperiment</em> = <em>SummarizedExperiment</em> with extra bells and whistles for single cells. E.g. slots for reduced dimensions.</p>
+</div>
+<img data-src="tidy-intro-talk_files/figure-revealjs/ggplot-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="seurat-and-singlecellexperiment" class="slide level2">
+<h2>Seurat and SingleCellExperiment</h2>
+<p><em>SingleCellExperiment</em> = <em>SE</em> with slots for e.g.&nbsp;reduced dimensions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>sce <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>  <span class="fu">filter</span>(Phase <span class="sc">==</span> <span class="st">"G1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(UMAP_1, UMAP_2, <span class="at">color=</span>nCount_RNA)) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">scale_color_gradient2</span>(<span class="at">trans=</span><span class="st">"log10"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
-<img data-src="figures/umap-1.png" class="r-stretch"></section>
+<img data-src="figures/umap-1.png" class="r-stretch quarto-figure-center"></section>
 <section id="efficient-operation-on-se-with-plyxp" class="slide level2">
 <h2>Efficient operation on SE with <code>plyxp</code></h2>
+</section>
+<section id="efficient-operation-on-se-with-plyxp-1" class="slide level2">
+<h2>Efficient operation on SE with <code>plyxp</code></h2>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "SummarizedExperiment"
-attr(,"package")
-[1] "SummarizedExperiment"</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">assay</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  a b c  d
 A 1 4 7 10
 B 2 5 8 11
 C 3 6 9 12</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="fu">colData</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 4 rows and 1 column
       type
@@ -658,6 +716,7 @@ b        1
 c        2
 d        2</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="fu">rowData</span>(simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 3 rows and 1 column
      length
@@ -667,7 +726,14 @@ B        20
 C        30</code></pre>
 </div>
 </div>
+</section>
+<section id="specifying-plyxp-methods" class="slide level2">
+<h2>Specifying `plyxp` methods</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="fu">library</span>(plyxp)</span>
+<span id="cb32-2"><a href="#cb32-2"></a>xp <span class="ot">&lt;-</span> simple <span class="sc">|&gt;</span> </span>
+<span id="cb32-3"><a href="#cb32-3"></a>  <span class="fu">new_plyxp</span>()</span>
+<span id="cb32-4"><a href="#cb32-4"></a>xp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble Abstraction: 3 × 4
     .features .samples | counts | length | type 
@@ -686,7 +752,12 @@ n   C         d        |     12 |     30 | 2
 # ℹ n = 12</code></pre>
 </div>
 </div>
+</section>
+<section id="mutate-with-plyxp" class="slide level2">
+<h2>Mutate with <code>plyxp</code></h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>xp <span class="sc">|&gt;</span> </span>
+<span id="cb34-2"><a href="#cb34-2"></a>  <span class="fu">mutate</span>(<span class="at">norm_counts =</span> counts <span class="sc">/</span> .rows<span class="sc">$</span>length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble Abstraction: 3 × 4
     .features .samples | counts norm_counts | length | type 
@@ -705,7 +776,14 @@ n   C         d        |     12        0.4  |     30 | 2
 # ℹ n = 12</code></pre>
 </div>
 </div>
+</section>
+<section id="grammar-for-group-and-summarize" class="slide level2">
+<h2>Grammar for group and summarize</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a>summed <span class="ot">&lt;-</span> xp <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a>  <span class="fu">group_by</span>(<span class="fu">cols</span>(type)) <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href="#cb36-3"></a>  <span class="fu">summarize</span>(<span class="at">sum =</span> <span class="fu">rowSums</span>(counts))</span>
+<span id="cb36-4"><a href="#cb36-4"></a>summed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A SummarizedExperiment-tibble Abstraction: 3 × 2
 # Groups: cols(type)
@@ -718,6 +796,7 @@ n   C         d        |     12        0.4  |     30 | 2
 5 B                2 |    19 |     20 |     2
 6 C                2 |    21 |     30 |     2</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="fu">assay</span>(summed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  [,1] [,2]
 A    5   17
@@ -725,12 +804,17 @@ B    7   19
 C    9   21</code></pre>
 </div>
 </div>
+</section>
+<section id="unspecifying-plyxp" class="slide level2">
+<h2>Unspecifying <code>plyxp</code></h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">class</span>(xp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "PlySummarizedExperiment"
 attr(,"package")
 [1] "plyxp"</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="fu">colData</span>(xp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 4 rows and 1 column
       type
@@ -740,6 +824,7 @@ b        1
 c        2
 d        2</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>xp <span class="sc">|&gt;</span> <span class="fu">se</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SummarizedExperiment 
 dim: 3 4 
@@ -752,14 +837,23 @@ colData names(1): type</code></pre>
 </div>
 </div>
 </section>
-<section id="computing-on-genomic-ranges-with-tidy-grammar" class="slide level2">
-<h2>Computing on genomic ranges with tidy grammar</h2>
-<p>Nontrivial to translate biological or biomedical questions about the genome into code. The tidy grammar helps in this case with familiar concepts of filters, joins, grouping, mutation, or summarization.</p>
+<section id="computing-on-genomic-ranges" class="slide level2">
+<h2>Computing on genomic ranges</h2>
+<ul>
+<li><p>Translate biological or biomedical questions about the genome into code.</p></li>
+<li><p>Leverage familiar concepts of filters, joins, grouping, mutation, or summarization.</p></li>
+</ul>
 
-<img data-src="figures/fillingthegaps.png" alt="T2T Consoritium, Science." class="r-stretch"></section>
+<img data-src="figures/fillingthegaps.png" alt="T2T Consoritium, Science." class="r-stretch quarto-figure-center"></section>
 <section id="genomic-overlap-as-a-join" class="slide level2">
-<h2>Genomic overlap as a <code>join</code></h2>
+<h2>Genomic overlap as a join</h2>
+
+<img data-src="figures/woodjoin.png" alt="Interwoven stacks of wood" class="r-stretch"></section>
+<section id="genomic-overlap-as-a-join-1" class="slide level2">
+<h2>Genomic overlap as a join</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="fu">library</span>(plyranges)</span>
+<span id="cb46-2"><a href="#cb46-2"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 40 ranges and 1 metadata column:
        seqnames    ranges strand |     score
@@ -778,6 +872,12 @@ colData names(1): type</code></pre>
   -------
   seqinfo: 1 sequence from an unspecified genome</code></pre>
 </div>
+</div>
+</section>
+<section id="genomic-overlap-as-a-join-2" class="slide level2">
+<h2>Genomic overlap as a join</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 3 ranges and 1 metadata column:
       seqnames    ranges strand |          id
@@ -789,8 +889,11 @@ colData names(1): type</code></pre>
   seqinfo: 1 sequence from an unspecified genome; no seqlengths</code></pre>
 </div>
 </div>
-<p><img data-src="figures/woodjoin.png" alt="Interwoven stacks of wood"></p>
+</section>
+<section id="computing-overlap-here-inner-join" class="slide level2">
+<h2>Computing overlap (here inner join)</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>x <span class="sc">|&gt;</span> <span class="fu">join_overlap_inner</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 30 ranges and 2 metadata columns:
        seqnames    ranges strand |     score          id
@@ -810,8 +913,17 @@ colData names(1): type</code></pre>
   seqinfo: 1 sequence from an unspecified genome</code></pre>
 </div>
 </div>
-<p>Many options, <code>directed</code>, <code>within</code>, <code>maxgap</code>, <code>minoverlap</code>, etc.</p>
+</section>
+<section id="options" class="slide level2">
+<h2>Options</h2>
+<p><code>directed</code>, <code>within</code>, <code>maxgap</code>, <code>minoverlap</code>, etc.</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="co"># chaining operations</span></span>
+<span id="cb52-2"><a href="#cb52-2"></a>x <span class="sc">|&gt;</span></span>
+<span id="cb52-3"><a href="#cb52-3"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="fl">3.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb52-4"><a href="#cb52-4"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb52-5"><a href="#cb52-5"></a>  <span class="fu">group_by</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb52-6"><a href="#cb52-6"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score), <span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 3 rows and 3 columns
            id ave_score         n
@@ -821,12 +933,28 @@ colData names(1): type</code></pre>
 3           c   5.45538         7</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="cell-output-display">
-<p><img data-src="tidy-intro-talk_files/figure-revealjs/ranges-plot-1.png" width="960"></p>
+</section>
+<section id="pipe-to-plot" class="slide level2">
+<h2>Pipe to plot</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="co"># pipe to plot</span></span>
+<span id="cb54-2"><a href="#cb54-2"></a>x <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href="#cb54-3"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="fl">3.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb54-4"><a href="#cb54-4"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a href="#cb54-5"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb54-6"><a href="#cb54-6"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> id, <span class="at">y =</span> score)) <span class="sc">+</span> </span>
+<span id="cb54-7"><a href="#cb54-7"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">width=</span>.<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
 </div>
-</div>
+<img data-src="tidy-intro-talk_files/figure-revealjs/ranges-plot-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="convenience-functions" class="slide level2">
+<h2>Convenience functions</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="co"># many convenience functions</span></span>
+<span id="cb55-2"><a href="#cb55-2"></a>y <span class="sc">|&gt;</span> </span>
+<span id="cb55-3"><a href="#cb55-3"></a>  <span class="fu">anchor_5p</span>() <span class="sc">|&gt;</span> <span class="co"># 5', 3', start, end, center</span></span>
+<span id="cb55-4"><a href="#cb55-4"></a>  <span class="fu">mutate</span>(<span class="at">width=</span><span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb55-5"><a href="#cb55-5"></a>  <span class="fu">join_nearest</span>(x, <span class="at">distance=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 3 ranges and 3 metadata columns:
       seqnames    ranges strand |          id     score  distance
@@ -841,17 +969,30 @@ colData names(1): type</code></pre>
 </section>
 <section id="assess-overlap-significance-using-a-tidy-grammar" class="slide level2">
 <h2>Assess overlap significance using a tidy grammar</h2>
-<p>something</p>
+<p>something here</p>
 </section>
-<section id="nullranges-for-defining-null-genomic-range-sets" class="slide level2">
-<h2>nullranges for defining null genomic range sets</h2>
-<p>We developed a package <a href="https://nullranges.github.io/nullranges">nullranges</a>, as a modular tool to assist with making genomic comparisons. It doesn’t do enrichment analysis but provides null genomic range sets for investigating various hypotheses.</p>
+<section id="defining-null-genomic-range-sets" class="slide level2">
+<h2>Defining null genomic range sets</h2>
+<ul>
+<li><p>We developed a package <a href="https://nullranges.github.io/nullranges">nullranges</a>, as a modular tool to assist with making genomic comparisons.</p></li>
+<li><p>No enrichment analysis but provides null genomic range sets for investigating various hypotheses.</p></li>
+</ul>
 </section>
 <section id="bootstrapping-ranges" class="slide level2">
 <h2>Bootstrapping ranges</h2>
 <p>Statistical papers from the ENCODE project noted that <em>block bootstrapping</em> genomic data preserves important spatial patterns (Bickel <em>et al.</em> 2010).</p>
-<p><img data-src="figures/boot.png" alt="Diagram of block bootstrapping"></p>
+
+<img data-src="figures/boot.png" alt="Diagram of block bootstrapping" class="r-stretch quarto-figure-center"></section>
+<section id="bootranges" class="slide level2">
+<h2>bootRanges</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="fu">library</span>(nullranges)</span>
+<span id="cb57-2"><a href="#cb57-2"></a>boot <span class="ot">&lt;-</span> <span class="fu">bootRanges</span>(x, <span class="at">blockLength=</span><span class="dv">10</span>, <span class="at">R=</span><span class="dv">20</span>)</span>
+<span id="cb57-3"><a href="#cb57-3"></a><span class="co"># keep track of bootstrap iteration, gives boot dist'n</span></span>
+<span id="cb57-4"><a href="#cb57-4"></a>boot <span class="sc">|&gt;</span></span>
+<span id="cb57-5"><a href="#cb57-5"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb57-6"><a href="#cb57-6"></a>  <span class="fu">group_by</span>(iter, id) <span class="sc">|&gt;</span></span>
+<span id="cb57-7"><a href="#cb57-7"></a>  <span class="fu">summarize</span>(<span class="at">n_overlaps =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 60 rows and 3 columns
      iter          id n_overlaps
@@ -869,40 +1010,50 @@ colData names(1): type</code></pre>
 60     20           c          8</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="cell-output-display">
-<p><img data-src="tidy-intro-talk_files/figure-revealjs/boot-plot-1.png" width="960"></p>
-</div>
-</div>
 </section>
+<section id="bootranges-1" class="slide level2">
+<h2>bootRanges</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a>boot <span class="sc">|&gt;</span></span>
+<span id="cb59-2"><a href="#cb59-2"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb59-3"><a href="#cb59-3"></a>  <span class="fu">group_by</span>(iter, id) <span class="sc">|&gt;</span></span>
+<span id="cb59-4"><a href="#cb59-4"></a>  <span class="fu">summarize</span>(<span class="at">n_overlaps =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb59-5"><a href="#cb59-5"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb59-6"><a href="#cb59-6"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> id, <span class="at">y =</span> n_overlaps)) <span class="sc">+</span> </span>
+<span id="cb59-7"><a href="#cb59-7"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="tidy-intro-talk_files/figure-revealjs/boot-plot-1.png" width="960" class="r-stretch quarto-figure-center"></section>
 <section id="matching-ranges" class="slide level2">
 <h2>Matching ranges</h2>
 <p>Matching on covariates from a large pool allows for more focused hypothesis testing.</p>
-<p><img data-src="figures/match.png" alt="Diagram of matching genomic ranges"></p>
+
+<img data-src="figures/match.png" alt="Diagram of matching genomic ranges" class="r-stretch quarto-figure-center"></section>
+<section id="matchranges" class="slide level2">
+<h2>matchRanges</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>xprime <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
+<span id="cb60-2"><a href="#cb60-2"></a>  <span class="fu">filter</span>(score <span class="sc">&gt;</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb60-3"><a href="#cb60-3"></a>  <span class="fu">mutate</span>(<span class="at">score =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="at">mean =</span> score, <span class="at">sd =</span> .<span class="dv">5</span>))</span>
+<span id="cb60-4"><a href="#cb60-4"></a>m <span class="ot">&lt;-</span> <span class="fu">matchRanges</span>(<span class="at">focal =</span> xprime, <span class="at">pool =</span> x, <span class="at">covar =</span> <span class="sc">~</span>score)</span>
+<span id="cb60-5"><a href="#cb60-5"></a><span class="fu">plotCovariate</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="tidy-intro-talk_files/figure-revealjs/match-covar-plot-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="group-and-summarize" class="slide level2">
+<h2>Group and summarize</h2>
 <div class="cell">
-<div class="cell-output-display">
-<p><img data-src="tidy-intro-talk_files/figure-revealjs/match-covar-plot-1.png" width="960"></p>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>GRanges object with 82 ranges and 2 metadata columns:
-       seqnames    ranges strand |     score origin
-          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;  &lt;Rle&gt;
-   [1]        1   154-155      * |   5.91030  focal
-   [2]        1   195-196      * |   6.95693  focal
-   [3]        1   280-281      * |   6.62346  focal
-   [4]        1   282-283      * |   5.20914  focal
-   [5]        1   303-304      * |   7.47406  focal
-   ...      ...       ...    ... .       ...    ...
-  [78]        1   898-899      * |   6.55006   pool
-  [79]        1   922-923      * |   6.46796   pool
-  [80]        1   956-957      * |   4.93079   pool
-  [81]        1   957-958      * |   4.34292   pool
-  [82]        1   966-967      * |   4.53976   pool
-  -------
-  seqinfo: 1 sequence from an unspecified genome</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a>combined <span class="ot">&lt;-</span> <span class="fu">bind_ranges</span>(</span>
+<span id="cb61-2"><a href="#cb61-2"></a>  <span class="at">focal =</span> xprime,</span>
+<span id="cb61-3"><a href="#cb61-3"></a>  <span class="at">matching =</span> <span class="fu">matched</span>(m),</span>
+<span id="cb61-4"><a href="#cb61-4"></a>  <span class="at">pool =</span> x,</span>
+<span id="cb61-5"><a href="#cb61-5"></a>  <span class="at">.id =</span> <span class="st">"origin"</span></span>
+<span id="cb61-6"><a href="#cb61-6"></a>)</span>
+<span id="cb61-7"><a href="#cb61-7"></a><span class="co"># now use the different sets for computation:</span></span>
+<span id="cb61-8"><a href="#cb61-8"></a>combined <span class="sc">|&gt;</span> </span>
+<span id="cb61-9"><a href="#cb61-9"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb61-10"><a href="#cb61-10"></a>  <span class="fu">group_by</span>(id, origin) <span class="sc">|&gt;</span></span>
+<span id="cb61-11"><a href="#cb61-11"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 9 rows and 3 columns
            id   origin ave_score
@@ -918,11 +1069,24 @@ colData names(1): type</code></pre>
 9           c     pool   5.14840</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="cell-output-display">
-<p><img data-src="tidy-intro-talk_files/figure-revealjs/match-overlap-plot-1.png" width="960"></p>
+</section>
+<section id="pipe-to-plot-1" class="slide level2">
+<h2>Pipe to plot</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a>combined <span class="sc">|&gt;</span> </span>
+<span id="cb63-2"><a href="#cb63-2"></a>  <span class="fu">join_overlap_inner</span>(y) <span class="sc">|&gt;</span></span>
+<span id="cb63-3"><a href="#cb63-3"></a>  <span class="fu">group_by</span>(id, origin) <span class="sc">|&gt;</span></span>
+<span id="cb63-4"><a href="#cb63-4"></a>  <span class="fu">summarize</span>(<span class="at">ave_score =</span> <span class="fu">mean</span>(score), <span class="at">sd =</span> <span class="fu">sd</span>(score)) <span class="sc">|&gt;</span></span>
+<span id="cb63-5"><a href="#cb63-5"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb63-6"><a href="#cb63-6"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(origin, ave_score, </span>
+<span id="cb63-7"><a href="#cb63-7"></a>             <span class="at">ymin=</span>ave_score<span class="dv">-2</span><span class="sc">*</span>sd, <span class="at">ymax=</span>ave_score<span class="sc">+</span><span class="dv">2</span><span class="sc">*</span>sd)) <span class="sc">+</span> </span>
+<span id="cb63-8"><a href="#cb63-8"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span></span>
+<span id="cb63-9"><a href="#cb63-9"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>id, <span class="at">labeller =</span> label_both)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
 </div>
-</div>
+<img data-src="tidy-intro-talk_files/figure-revealjs/match-overlap-plot-1.png" width="960" class="r-stretch quarto-figure-center"></section>
+<section id="bootranges-and-matchranges-methods" class="slide level2">
+<h2>bootRanges and matchRanges methods</h2>
 <p>These are published as Application Notes:</p>
 <ul>
 <li><p><a href="https://doi.org/10.1093/bioinformatics/btad190">bootRanges</a></p></li>
@@ -935,6 +1099,7 @@ colData names(1): type</code></pre>
 </section>
 <section id="what-has-been-implemented" class="slide level2">
 <h2>What has been implemented</h2>
+<p>Put people’s packages names etc.</p>
 <ul>
 <li><p>Matrix-shaped objects (SE, SCE)</p></li>
 <li><p>Ranges</p></li>
