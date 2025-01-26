@@ -1,10 +1,14 @@
 ---
-title: "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data"
+title: "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data"
 author:
   - name: "Michael Love"
     affiliation: "Biostatistics & Genetics, UNC-Chapel Hill"
-format: revealjs
-self-contained: false
+format: 
+  revealjs:
+    theme: simple
+    slideNumber: true
+    self-contained: false
+    highlight-style: github
 include-in-header:
   - text: |
       <style>
@@ -31,12 +35,12 @@ development via GitHub Projects.
 ## Diagram of tidyomics workflows
 
 ![](figures/figure2.png){fig-align="center"
-fig-alt="Diagram of how packages share a similar grammar to operate on data objects. From top to bottom, the data are analyzed, manipulated, and made into plots."}
+fig-alt="Diagram of how packages share a similar grammar="}
 
 ## International development team
 
 ![](figures/tidyomics_community.png){fig-align="center" width="300"
-fig-alt="Diagram of tidyomics community, with users and developers interacting. On the top are users with arrows coming from developers and packages. On the bottom is the extended community, including Bioconductor."}
+fig-alt="Diagram of tidyomics community="}
 
 ## Keep data organized in *objects*
 
@@ -58,6 +62,7 @@ A *SummarizedExperiment* is annotated matrix data:
 
 ```{r}
 #| message: false
+#| echo: true
 library(SummarizedExperiment)
 set.seed(123) # some random count data
 counts <- matrix(rpois(16, lambda=100), ncol=4)
@@ -157,7 +162,7 @@ What does this mean "*SE-tibble abstraction*"?
 Essentially this is an API, we can use our familiar verbs and interact
 with the native object.
 
-![](figures/counter.png){fig-alt="Picture of a counter with a menu and a bell"}
+![](figures/counter.png){fig-alt="Counter with a menu and a bell"}
 
 ## Still a standard Bioc object
 
@@ -274,7 +279,7 @@ Nontrivial to translate biological or biomedical questions about the
 genome into code. The tidy grammar helps in this case with familiar
 concepts of filters, joins, grouping, mutation, or summarization.
 
-![](figures/fillingthegaps.png){fig-alt="Source: 'Filling the Gaps', T2T Consoritium, Science."}
+![](figures/fillingthegaps.png){fig-alt="T2T Consoritium, Science."}
 
 ## Genomic overlap as a `join`
 
@@ -300,7 +305,7 @@ x
 y
 ```
 
-![](figures/woodjoin.png){fig-alt="Picture of two stacks of wood being interleaved"}
+![](figures/woodjoin.png){fig-alt="Interwoven stacks of wood"}
 
 ```{r}
 x |> join_overlap_inner(y)
@@ -353,7 +358,7 @@ Statistical papers from the ENCODE project noted that *block
 bootstrapping* genomic data preserves important spatial patterns
 (Bickel *et al.* 2010).
 
-![](figures/boot.png){fig-alt="Diagram of block bootstrapping genomic ranges. Blocks are resampled from original data and arranged to form new range sets."}
+![](figures/boot.png){fig-alt="Diagram of block bootstrapping"}
 
 ```{r}
 #| message: false
@@ -381,7 +386,7 @@ boot |>
 Matching on covariates from a large pool allows for more focused
 hypothesis testing.
 
-![](figures/match.png){fig-alt="Diagram of matching genomic ranges. A pool of different colored ranges are drawn from to match the warmer colors of a focal set of ranges."}
+![](figures/match.png){fig-alt="Diagram of matching genomic ranges"}
 
 ```{r match-covar-plot}
 xprime <- x |>

@@ -2,210 +2,210 @@
   {
     "objectID": "tidy-intro-talk.html#tidyomics-project",
     "href": "tidy-intro-talk.html#tidyomics-project",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Tidyomics project",
     "text": "Tidyomics project\nAn open, open-source project spanning multiple R packages, and developers from around the world. Operates within the Bioconductor Project, with separate funding and organization. Coordination of development via GitHub Projects.\n\nhttps://github.com/tidyomics\nAnnouncement paper\ntidiness_in_bioc channel in Bioconductor Slack"
   },
   {
     "objectID": "tidy-intro-talk.html#diagram-of-tidyomics-workflows",
     "href": "tidy-intro-talk.html#diagram-of-tidyomics-workflows",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Diagram of tidyomics workflows",
     "text": "Diagram of tidyomics workflows"
   },
   {
     "objectID": "tidy-intro-talk.html#international-development-team",
     "href": "tidy-intro-talk.html#international-development-team",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "International development team",
     "text": "International development team"
   },
   {
     "objectID": "tidy-intro-talk.html#keep-data-organized-in-objects",
     "href": "tidy-intro-talk.html#keep-data-organized-in-objects",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Keep data organized in objects",
     "text": "Keep data organized in objects\n\nWe typically have more information than just a matrix\nRow and column information (on features and samples)\nAnnotated matrix data, i.e. python’s xarray, AnnData\nMetadata: organism, genome build, annotation release\n2002: ExpressionSet; 2011: SummarizedExperiment\nEndomorphic functions: x |&gt; f -&gt; x"
   },
   {
     "objectID": "tidy-intro-talk.html#summarizedexperiment-se",
     "href": "tidy-intro-talk.html#summarizedexperiment-se",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "SummarizedExperiment, “SE”",
-    "text": "SummarizedExperiment, “SE”\nA SummarizedExperiment is annotated matrix data:\n\n\n    s1  s2  s3  s4\ng1  94 117 112  94\ng2 111 104 103 112\ng3  83  87 104 108\ng4 101  82 101  99"
+    "text": "SummarizedExperiment, “SE”\nA SummarizedExperiment is annotated matrix data:\n\nlibrary(SummarizedExperiment)\nset.seed(123) # some random count data\ncounts &lt;- matrix(rpois(16, lambda=100), ncol=4)\nrownames(counts) &lt;- c(\"g1\",\"g2\",\"g3\",\"g4\")\ncolnames(counts) &lt;- c(\"s1\",\"s2\",\"s3\",\"s4\")\ncounts\n\n    s1  s2  s3  s4\ng1  94 117 112  94\ng2 111 104 103 112\ng3  83  87 104 108\ng4 101  82 101  99"
   },
   {
     "objectID": "tidy-intro-talk.html#row-data",
     "href": "tidy-intro-talk.html#row-data",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Row data",
     "text": "Row data\n\n\nDataFrame with 4 rows and 2 columns\n           id      symbol\n  &lt;character&gt; &lt;character&gt;\n1          g1         ABC\n2          g2         DEF\n3          g3         GHI\n4          g4         JKL"
   },
   {
     "objectID": "tidy-intro-talk.html#column-data",
     "href": "tidy-intro-talk.html#column-data",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Column data",
     "text": "Column data\n\n\nDataFrame with 4 rows and 3 columns\n       sample   condition         sex\n  &lt;character&gt; &lt;character&gt; &lt;character&gt;\n1          s1           x           m\n2          s2           y           m\n3          s3           x           f\n4          s4           y           f"
   },
   {
     "objectID": "tidy-intro-talk.html#assembled-object",
     "href": "tidy-intro-talk.html#assembled-object",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Assembled object",
     "text": "Assembled object\n\n\nclass: SummarizedExperiment \ndim: 4 4 \nmetadata(1): organism\nassays(1): counts\nrownames(4): g1 g2 g3 g4\nrowData names(2): id symbol\ncolnames(4): s1 s2 s3 s4\ncolData names(3): sample condition sex"
   },
   {
     "objectID": "tidy-intro-talk.html#avoids-common-bookkeeping-errors",
     "href": "tidy-intro-talk.html#avoids-common-bookkeeping-errors",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Avoids common bookkeeping errors",
     "text": "Avoids common bookkeeping errors\nReordering samples (columns) is a global operation:\n\n\n    s1  s3  s2  s4\ng1  94 112 117  94\ng2 111 103 104 112\ng3  83 104  87 108\ng4 101 101  82  99\n\n\nDataFrame with 4 rows and 3 columns\n        sample   condition         sex\n   &lt;character&gt; &lt;character&gt; &lt;character&gt;\ns1          s1           x           m\ns3          s3           x           f\ns2          s2           y           m\ns4          s4           y           f\n\n\nAssignment that might result in sample swap results in an error:\nOther such validity checks include comparison of genomic ranges across different genome builds: will result in an error."
   },
   {
     "objectID": "tidy-intro-talk.html#can-be-hard-for-new-users",
     "href": "tidy-intro-talk.html#can-be-hard-for-new-users",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Can be hard for new users",
     "text": "Can be hard for new users\n\n\n[1] \"colData\"         \"assays\"          \"NAMES\"           \"elementMetadata\" \"metadata\"       \n\n\n [1] \"!=,ANY,Vector-method\"                                        \n [2] \"!=,Vector,ANY-method\"                                        \n [3] \"!=,Vector,Vector-method\"                                     \n [4] \"[,SummarizedExperiment,ANY,ANY,ANY-method\"                   \n [5] \"[[,SummarizedExperiment,ANY,missing-method\"                  \n [6] \"[[&lt;-,SummarizedExperiment,ANY,missing-method\"                \n [7] \"[&lt;-,SummarizedExperiment,ANY,ANY,SummarizedExperiment-method\"\n [8] \"[&lt;-,Vector,ANY,ANY,ANY-method\"                               \n [9] \"%in%,ANY,Vector-method\"                                      \n[10] \"%in%,Vector,ANY-method\""
   },
   {
     "objectID": "tidy-intro-talk.html#many-beginners-know-dplyrggplot2",
     "href": "tidy-intro-talk.html#many-beginners-know-dplyrggplot2",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Many beginners know dplyr/ggplot2",
     "text": "Many beginners know dplyr/ggplot2\n\n\n# A tibble: 2 × 3\n  sample condition sex  \n  &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;\n1 s1     x         m    \n2 s3     x         f"
   },
   {
     "objectID": "tidy-intro-talk.html#enabling-dplyr-verbs-for-omics",
     "href": "tidy-intro-talk.html#enabling-dplyr-verbs-for-omics",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Enabling dplyr verbs for omics",
     "text": "Enabling dplyr verbs for omics\n\n\n# A SummarizedExperiment-tibble abstraction: 16 × 8\n# Features=4 | Samples=4 | Assays=counts\n   .feature .sample counts sample condition sex   id    symbol\n   &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; \n 1 g1       s1          94 s1     x         m     g1    ABC   \n 2 g2       s1         111 s1     x         m     g2    DEF   \n 3 g3       s1          83 s1     x         m     g3    GHI   \n 4 g4       s1         101 s1     x         m     g4    JKL   \n 5 g1       s2         117 s2     y         m     g1    ABC   \n 6 g2       s2         104 s2     y         m     g2    DEF   \n 7 g3       s2          87 s2     y         m     g3    GHI   \n 8 g4       s2          82 s2     y         m     g4    JKL   \n 9 g1       s3         112 s3     x         f     g1    ABC   \n10 g2       s3         103 s3     x         f     g2    DEF   \n11 g3       s3         104 s3     x         f     g3    GHI   \n12 g4       s3         101 s3     x         f     g4    JKL   \n13 g1       s4          94 s4     y         f     g1    ABC   \n14 g2       s4         112 s4     y         f     g2    DEF   \n15 g3       s4         108 s4     y         f     g3    GHI   \n16 g4       s4          99 s4     y         f     g4    JKL   \n\n\nWhat does this mean “SE-tibble abstraction”?\nEssentially this is an API, we can use our familiar verbs and interact with the native object."
   },
   {
     "objectID": "tidy-intro-talk.html#still-a-standard-bioc-object",
     "href": "tidy-intro-talk.html#still-a-standard-bioc-object",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Still a standard Bioc object",
     "text": "Still a standard Bioc object\n\n\n[1] \"SummarizedExperiment\"\nattr(,\"package\")\n[1] \"SummarizedExperiment\"\n\n\n[1] 4 4"
   },
   {
     "objectID": "tidy-intro-talk.html#we-can-use-familiar-dplyr-verbs",
     "href": "tidy-intro-talk.html#we-can-use-familiar-dplyr-verbs",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "We can use familiar dplyr verbs",
     "text": "We can use familiar dplyr verbs\n\n\n# A SummarizedExperiment-tibble abstraction: 8 × 8\n# Features=4 | Samples=2 | Assays=counts\n  .feature .sample counts sample condition sex   id    symbol\n  &lt;chr&gt;    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; \n1 g1       s1          94 s1     x         m     g1    ABC   \n2 g2       s1         111 s1     x         m     g2    DEF   \n3 g3       s1          83 s1     x         m     g3    GHI   \n4 g4       s1         101 s1     x         m     g4    JKL   \n5 g1       s3         112 s3     x         f     g1    ABC   \n6 g2       s3         103 s3     x         f     g2    DEF   \n7 g3       s3         104 s3     x         f     g3    GHI   \n8 g4       s3         101 s3     x         f     g4    JKL   \n\n\n\n\nDataFrame with 2 rows and 3 columns\n        sample   condition         sex\n   &lt;character&gt; &lt;character&gt; &lt;character&gt;\ns1          s1           x           m\ns3          s3           x           f"
   },
   {
     "objectID": "tidy-intro-talk.html#facilitates-quick-exploration",
     "href": "tidy-intro-talk.html#facilitates-quick-exploration",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Facilitates quick exploration",
     "text": "Facilitates quick exploration"
   },
   {
     "objectID": "tidy-intro-talk.html#works-with-seurat-and-sce",
     "href": "tidy-intro-talk.html#works-with-seurat-and-sce",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Works with Seurat and SCE",
     "text": "Works with Seurat and SCE\nSingleCellExperiment = SummarizedExperiment with extra bells and whistles for single cells. E.g. slots for reduced dimensions."
   },
   {
     "objectID": "tidy-intro-talk.html#efficient-operation-on-se-with-plyxp",
     "href": "tidy-intro-talk.html#efficient-operation-on-se-with-plyxp",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Efficient operation on SE with plyxp",
     "text": "Efficient operation on SE with plyxp\n\n\n[1] \"SummarizedExperiment\"\nattr(,\"package\")\n[1] \"SummarizedExperiment\"\n\n\n  a b c  d\nA 1 4 7 10\nB 2 5 8 11\nC 3 6 9 12\n\n\nDataFrame with 4 rows and 1 column\n      type\n  &lt;factor&gt;\na        1\nb        1\nc        2\nd        2\n\n\nDataFrame with 3 rows and 1 column\n     length\n  &lt;numeric&gt;\nA        10\nB        20\nC        30\n\n\n\n\n# A SummarizedExperiment-tibble Abstraction: 3 × 4\n    .features .samples | counts | length | type \n    &lt;chr&gt;     &lt;chr&gt;    |  &lt;int&gt; |  &lt;dbl&gt; | &lt;fct&gt;\n  1 A         a        |      1 |     10 | 1    \n  2 B         a        |      2 |     20 | 1    \n  3 C         a        |      3 |     30 | 1    \n  4 A         b        |      4 |     10 | 1    \n  5 B         b        |      5 |     20 | 1    \n  … …         …               …        …   …    \nn-4 B         c        |      8 |     20 | 2    \nn-3 C         c        |      9 |     30 | 2    \nn-2 A         d        |     10 |     10 | 2    \nn-1 B         d        |     11 |     20 | 2    \nn   C         d        |     12 |     30 | 2    \n# ℹ n = 12\n\n\n\n\n# A SummarizedExperiment-tibble Abstraction: 3 × 4\n    .features .samples | counts norm_counts | length | type \n    &lt;chr&gt;     &lt;chr&gt;    |  &lt;int&gt;       &lt;dbl&gt; |  &lt;dbl&gt; | &lt;fct&gt;\n  1 A         a        |      1        0.1  |     10 | 1    \n  2 B         a        |      2        0.1  |     20 | 1    \n  3 C         a        |      3        0.1  |     30 | 1    \n  4 A         b        |      4        0.4  |     10 | 1    \n  5 B         b        |      5        0.25 |     20 | 1    \n  … …         …               …          …         …   …    \nn-4 B         c        |      8        0.4  |     20 | 2    \nn-3 C         c        |      9        0.3  |     30 | 2    \nn-2 A         d        |     10        1    |     10 | 2    \nn-1 B         d        |     11        0.55 |     20 | 2    \nn   C         d        |     12        0.4  |     30 | 2    \n# ℹ n = 12\n\n\n\n\n# A SummarizedExperiment-tibble Abstraction: 3 × 2\n# Groups: cols(type)\n  .features .samples |   sum | length |  type\n  &lt;chr&gt;        &lt;int&gt; | &lt;dbl&gt; |  &lt;dbl&gt; | &lt;int&gt;\n1 A                1 |     5 |     10 |     1\n2 B                1 |     7 |     20 |     1\n3 C                1 |     9 |     30 |     1\n4 A                2 |    17 |     10 |     2\n5 B                2 |    19 |     20 |     2\n6 C                2 |    21 |     30 |     2\n\n\n  [,1] [,2]\nA    5   17\nB    7   19\nC    9   21\n\n\n\n\n[1] \"PlySummarizedExperiment\"\nattr(,\"package\")\n[1] \"plyxp\"\n\n\nDataFrame with 4 rows and 1 column\n      type\n  &lt;factor&gt;\na        1\nb        1\nc        2\nd        2\n\n\nclass: SummarizedExperiment \ndim: 3 4 \nmetadata(0):\nassays(1): counts\nrownames(3): A B C\nrowData names(1): length\ncolnames(4): a b c d\ncolData names(1): type"
   },
   {
     "objectID": "tidy-intro-talk.html#computing-on-genomic-ranges-with-tidy-grammar",
     "href": "tidy-intro-talk.html#computing-on-genomic-ranges-with-tidy-grammar",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Computing on genomic ranges with tidy grammar",
     "text": "Computing on genomic ranges with tidy grammar\nNontrivial to translate biological or biomedical questions about the genome into code. The tidy grammar helps in this case with familiar concepts of filters, joins, grouping, mutation, or summarization."
   },
   {
     "objectID": "tidy-intro-talk.html#genomic-overlap-as-a-join",
     "href": "tidy-intro-talk.html#genomic-overlap-as-a-join",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Genomic overlap as a join",
     "text": "Genomic overlap as a join\n\n\nGRanges object with 40 ranges and 1 metadata column:\n       seqnames    ranges strand |     score\n          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;\n   [1]        1   114-115      * |   4.88780\n   [2]        1   129-130      * |   4.40817\n   [3]        1   154-155      * |   5.18773\n   [4]        1   195-196      * |   5.81901\n   [5]        1   200-201      * |   4.14720\n   ...      ...       ...    ... .       ...\n  [36]        1   898-899      * |   6.55006\n  [37]        1   922-923      * |   6.46796\n  [38]        1   956-957      * |   4.93079\n  [39]        1   957-958      * |   4.34292\n  [40]        1   966-967      * |   4.53976\n  -------\n  seqinfo: 1 sequence from an unspecified genome\n\n\nGRanges object with 3 ranges and 1 metadata column:\n      seqnames    ranges strand |          id\n         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;\n  [1]        1   101-300      * |           a\n  [2]        1   451-650      * |           b\n  [3]        1  801-1000      * |           c\n  -------\n  seqinfo: 1 sequence from an unspecified genome; no seqlengths\n\n\n\n\n\nGRanges object with 30 ranges and 2 metadata columns:\n       seqnames    ranges strand |     score          id\n          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;character&gt;\n   [1]        1   114-115      * |   4.88780           a\n   [2]        1   129-130      * |   4.40817           a\n   [3]        1   154-155      * |   5.18773           a\n   [4]        1   195-196      * |   5.81901           a\n   [5]        1   200-201      * |   4.14720           a\n   ...      ...       ...    ... .       ...         ...\n  [26]        1   898-899      * |   6.55006           c\n  [27]        1   922-923      * |   6.46796           c\n  [28]        1   956-957      * |   4.93079           c\n  [29]        1   957-958      * |   4.34292           c\n  [30]        1   966-967      * |   4.53976           c\n  -------\n  seqinfo: 1 sequence from an unspecified genome\n\n\nMany options, directed, within, maxgap, minoverlap, etc.\n\n\nDataFrame with 3 rows and 3 columns\n           id ave_score         n\n  &lt;character&gt; &lt;numeric&gt; &lt;integer&gt;\n1           a   5.00465        10\n2           b   5.43353        11\n3           c   5.45538         7\n\n\n\n\n\n\n\n\n\nGRanges object with 3 ranges and 3 metadata columns:\n      seqnames    ranges strand |          id     score  distance\n         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;numeric&gt; &lt;integer&gt;\n  [1]        1   101-102      * |           a   4.88780        11\n  [2]        1   451-452      * |           b   3.99047         1\n  [3]        1   801-802      * |           c   6.49877        21\n  -------\n  seqinfo: 1 sequence from an unspecified genome; no seqlengths"
   },
   {
     "objectID": "tidy-intro-talk.html#assess-overlap-significance-using-a-tidy-grammar",
     "href": "tidy-intro-talk.html#assess-overlap-significance-using-a-tidy-grammar",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Assess overlap significance using a tidy grammar",
     "text": "Assess overlap significance using a tidy grammar\nsomething"
   },
   {
     "objectID": "tidy-intro-talk.html#nullranges-for-defining-null-genomic-range-sets",
     "href": "tidy-intro-talk.html#nullranges-for-defining-null-genomic-range-sets",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "nullranges for defining null genomic range sets",
     "text": "nullranges for defining null genomic range sets\nWe developed a package nullranges, as a modular tool to assist with making genomic comparisons. It doesn’t do enrichment analysis but provides null genomic range sets for investigating various hypotheses."
   },
   {
     "objectID": "tidy-intro-talk.html#bootstrapping-ranges",
     "href": "tidy-intro-talk.html#bootstrapping-ranges",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Bootstrapping ranges",
     "text": "Bootstrapping ranges\nStatistical papers from the ENCODE project noted that block bootstrapping genomic data preserves important spatial patterns (Bickel et al. 2010).\n\n\n\nDataFrame with 60 rows and 3 columns\n     iter          id n_overlaps\n    &lt;Rle&gt; &lt;character&gt;  &lt;integer&gt;\n1       1           a          4\n2       1           b         10\n3       1           c          4\n4       2           a         11\n5       2           b         10\n...   ...         ...        ...\n56     19           b         18\n57     19           c         11\n58     20           a         10\n59     20           b         15\n60     20           c          8"
   },
   {
     "objectID": "tidy-intro-talk.html#matching-ranges",
     "href": "tidy-intro-talk.html#matching-ranges",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Matching ranges",
     "text": "Matching ranges\nMatching on covariates from a large pool allows for more focused hypothesis testing.\n\n\n\n\n\n\n\n\nGRanges object with 82 ranges and 2 metadata columns:\n       seqnames    ranges strand |     score origin\n          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;  &lt;Rle&gt;\n   [1]        1   154-155      * |   5.91030  focal\n   [2]        1   195-196      * |   6.95693  focal\n   [3]        1   280-281      * |   6.62346  focal\n   [4]        1   282-283      * |   5.20914  focal\n   [5]        1   303-304      * |   7.47406  focal\n   ...      ...       ...    ... .       ...    ...\n  [78]        1   898-899      * |   6.55006   pool\n  [79]        1   922-923      * |   6.46796   pool\n  [80]        1   956-957      * |   4.93079   pool\n  [81]        1   957-958      * |   4.34292   pool\n  [82]        1   966-967      * |   4.53976   pool\n  -------\n  seqinfo: 1 sequence from an unspecified genome\n\n\nDataFrame with 9 rows and 3 columns\n           id   origin ave_score\n  &lt;character&gt;    &lt;Rle&gt; &lt;numeric&gt;\n1           a    focal   6.17495\n2           a matching   5.54412\n3           a     pool   5.00465\n4           b    focal   5.79665\n5           b matching   6.07625\n6           b     pool   5.25055\n7           c    focal   6.32536\n8           c matching   5.82463\n9           c     pool   5.14840\n\n\n\n\n\n\n\nThese are published as Application Notes:\n\nbootRanges\nmatchRanges"
   },
   {
     "objectID": "tidy-intro-talk.html#current-state-and-future-directions",
     "href": "tidy-intro-talk.html#current-state-and-future-directions",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Current state and future directions",
     "text": "Current state and future directions\nsomething"
   },
   {
     "objectID": "tidy-intro-talk.html#what-has-been-implemented",
     "href": "tidy-intro-talk.html#what-has-been-implemented",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "What has been implemented",
     "text": "What has been implemented\n\nMatrix-shaped objects (SE, SCE)\nRanges\nInteractions\nCytometry\nSpatial\nmore to come…"
   },
   {
     "objectID": "tidy-intro-talk.html#limitations",
     "href": "tidy-intro-talk.html#limitations",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Limitations",
     "text": "Limitations\n\npackage code and non-standard evaluation\noptimized code, e.g. matrix operations"
   },
   {
     "objectID": "tidy-intro-talk.html#how-to-contribute",
     "href": "tidy-intro-talk.html#how-to-contribute",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "How to contribute",
     "text": "How to contribute\n\nhttps://github.com/tidyomics, read docs, see open challenges\nMotivation: https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2\ntidiness_in_bioc channel in Bioconductor Slack"
   },
   {
     "objectID": "tidy-intro-talk.html#outro",
     "href": "tidy-intro-talk.html#outro",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Outro",
     "text": "Outro\nOmics data analysis means looking at:\n\nmain contributions to variance (e.g. PCA, see plotPCA for bulk and OSCA for sc), also variancePartition\ncolumn and row densities (tidySE allows directly plotting geom_density of rows/columns, or geom_violin)\nknown positive features, feature-level plots (filter to feature, pipe to geom_point etc.)\n\nIf you’re interested in more complicated use cases of tidyomics see this online book:\n\nTidy ranges tutorial"
   },
   {
     "objectID": "tidy-intro-talk.html#contributors",
     "href": "tidy-intro-talk.html#contributors",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Contributors",
     "text": "Contributors\n\nStefano Mangiola (tidyomics leadership, tidy expression, single cell, spatial)\nJustin Landis (plyxp)\nEric Davis, Wancen Mu, Doug Phanstiel (nullranges)\nStuart Lee, Michael Lawrence, Di Cook (plyranges)\n\nAnd tidyomics developers: William Hutchison, Timothy Keyes, Helena Crowell, Jacques Serizay, Charlotte Soneson, Eric Davis, Noriaki Sato, Lambda Moses, Boyd Tarlinton, Abdullah Nahid, Miha Kosmac, Quentin Clayssen, Victor Yuan, Wancen Mu, Ji-Eun Park, Izabela Mamede, Min Hyung Ryu, Pierre-Paul Axisa, Paulina Paiz, Chi-Lam Poon, Ming Tang"
   },
   {
     "objectID": "tidy-intro-talk.html#funding",
     "href": "tidy-intro-talk.html#funding",
-    "title": "Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Funding",
     "text": "Funding\ntidyomics project funded by an Essential Open Source Software award from CZI and Wellcome Trust"
   }

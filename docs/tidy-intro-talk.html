@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.3.353">
 
   <meta name="author" content="Michael Love">
-  <title>Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data</title>
+  <title>Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -29,6 +29,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #24292e;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #24292e; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #6a737d; } /* Annotation */
+    code span.at { color: #d73a49; } /* Attribute */
+    code span.bn { color: #005cc5; } /* BaseN */
+    code span.bu { color: #d73a49; } /* BuiltIn */
+    code span.cf { color: #d73a49; } /* ControlFlow */
+    code span.ch { color: #032f62; } /* Char */
+    code span.cn { color: #005cc5; } /* Constant */
+    code span.co { color: #6a737d; } /* Comment */
+    code span.cv { color: #6a737d; } /* CommentVar */
+    code span.do { color: #6a737d; } /* Documentation */
+    code span.dt { color: #d73a49; } /* DataType */
+    code span.dv { color: #005cc5; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
+    code span.fl { color: #005cc5; } /* Float */
+    code span.fu { color: #6f42c1; } /* Function */
+    code span.im { color: #032f62; } /* Import */
+    code span.in { color: #6a737d; } /* Information */
+    code span.kw { color: #d73a49; } /* Keyword */
+    code span.op { color: #24292e; } /* Operator */
+    code span.ot { color: #6f42c1; } /* Other */
+    code span.pp { color: #d73a49; } /* Preprocessor */
+    code span.re { color: #6a737d; } /* RegionMarker */
+    code span.sc { color: #005cc5; } /* SpecialChar */
+    code span.ss { color: #032f62; } /* SpecialString */
+    code span.st { color: #032f62; } /* String */
+    code span.va { color: #e36209; } /* Variable */
+    code span.vs { color: #032f62; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
   </style>
   <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto.css">
   <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -330,7 +395,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Tidyomics: Enabling Tidy Data Analysis Workflows for Complex Biological Data</h1>
+  <h1 class="title">Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -356,11 +421,11 @@ Michael Love
 <section id="diagram-of-tidyomics-workflows" class="slide level2">
 <h2>Diagram of tidyomics workflows</h2>
 
-<img data-src="figures/figure2.png" alt="Diagram of how packages share a similar grammar to operate on data objects. From top to bottom, the data are analyzed, manipulated, and made into plots." class="r-stretch quarto-figure-center"></section>
+<img data-src="figures/figure2.png" alt="Diagram of how packages share a similar grammar=" class="r-stretch quarto-figure-center"></section>
 <section id="international-development-team" class="slide level2">
 <h2>International development team</h2>
 
-<img data-src="figures/tidyomics_community.png" alt="Diagram of tidyomics community, with users and developers interacting. On the top are users with arrows coming from developers and packages. On the bottom is the extended community, including Bioconductor." width="300" class="r-stretch quarto-figure-center"></section>
+<img data-src="figures/tidyomics_community.png" alt="Diagram of tidyomics community=" width="300" class="r-stretch quarto-figure-center"></section>
 <section id="keep-data-organized-in-objects" class="slide level2">
 <h2>Keep data organized in <em>objects</em></h2>
 <ul>
@@ -376,6 +441,12 @@ Michael Love
 <h2>SummarizedExperiment, “SE”</h2>
 <p>A <em>SummarizedExperiment</em> is annotated matrix data:</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># some random count data</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>counts <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rpois</span>(<span class="dv">16</span>, <span class="at">lambda=</span><span class="dv">100</span>), <span class="at">ncol=</span><span class="dv">4</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">rownames</span>(counts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"g1"</span>,<span class="st">"g2"</span>,<span class="st">"g3"</span>,<span class="st">"g4"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">colnames</span>(counts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"s1"</span>,<span class="st">"s2"</span>,<span class="st">"s3"</span>,<span class="st">"s4"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a>counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    s1  s2  s3  s4
 g1  94 117 112  94
@@ -513,7 +584,7 @@ s4          s4           y           f</code></pre>
 <p>What does this mean “<em>SE-tibble abstraction</em>”?</p>
 <p>Essentially this is an API, we can use our familiar verbs and interact with the native object.</p>
 
-<img data-src="figures/counter.png" alt="Picture of a counter with a menu and a bell" class="r-stretch"></section>
+<img data-src="figures/counter.png" alt="Counter with a menu and a bell" class="r-stretch"></section>
 <section id="still-a-standard-bioc-object" class="slide level2">
 <h2>Still a standard Bioc object</h2>
 <div class="cell">
@@ -685,7 +756,7 @@ colData names(1): type</code></pre>
 <h2>Computing on genomic ranges with tidy grammar</h2>
 <p>Nontrivial to translate biological or biomedical questions about the genome into code. The tidy grammar helps in this case with familiar concepts of filters, joins, grouping, mutation, or summarization.</p>
 
-<img data-src="figures/fillingthegaps.png" alt="Source: 'Filling the Gaps', T2T Consoritium, Science." class="r-stretch"></section>
+<img data-src="figures/fillingthegaps.png" alt="T2T Consoritium, Science." class="r-stretch"></section>
 <section id="genomic-overlap-as-a-join" class="slide level2">
 <h2>Genomic overlap as a <code>join</code></h2>
 <div class="cell">
@@ -718,7 +789,7 @@ colData names(1): type</code></pre>
   seqinfo: 1 sequence from an unspecified genome; no seqlengths</code></pre>
 </div>
 </div>
-<p><img data-src="figures/woodjoin.png" alt="Picture of two stacks of wood being interleaved"></p>
+<p><img data-src="figures/woodjoin.png" alt="Interwoven stacks of wood"></p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>GRanges object with 30 ranges and 2 metadata columns:
@@ -779,7 +850,7 @@ colData names(1): type</code></pre>
 <section id="bootstrapping-ranges" class="slide level2">
 <h2>Bootstrapping ranges</h2>
 <p>Statistical papers from the ENCODE project noted that <em>block bootstrapping</em> genomic data preserves important spatial patterns (Bickel <em>et al.</em> 2010).</p>
-<p><img data-src="figures/boot.png" alt="Diagram of block bootstrapping genomic ranges. Blocks are resampled from original data and arranged to form new range sets."></p>
+<p><img data-src="figures/boot.png" alt="Diagram of block bootstrapping"></p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>DataFrame with 60 rows and 3 columns
@@ -807,7 +878,7 @@ colData names(1): type</code></pre>
 <section id="matching-ranges" class="slide level2">
 <h2>Matching ranges</h2>
 <p>Matching on covariates from a large pool allows for more focused hypothesis testing.</p>
-<p><img data-src="figures/match.png" alt="Diagram of matching genomic ranges. A pool of different colored ranges are drawn from to match the warmer colors of a focal set of ranges."></p>
+<p><img data-src="figures/match.png" alt="Diagram of matching genomic ranges"></p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="tidy-intro-talk_files/figure-revealjs/match-covar-plot-1.png" width="960"></p>
@@ -971,7 +1042,7 @@ colData names(1): type</code></pre>
         progress: true,
 
         // Display the page number of the current slide
-        slideNumber: false,
+        slideNumber: 'c/t',
 
         // 'all', 'print', or 'speaker'
         showSlideNumber: 'all',
