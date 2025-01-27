@@ -214,7 +214,7 @@ methods(class = class(se)) |> head()
 ```
 
 -   An advanced R/Bioconductor user should eventually learn these
-    methods.
+    methods, class/method inheritance.
 
 -   Not needed to explore or visualize data, or make basic data
     summaries.
@@ -233,7 +233,9 @@ samples |>
 
 ## Enabling *dplyr* verbs for omics
 
-Printing says: "*SummarizedExperiment-tibble abstraction*"
+-   *tidySummarizedExperiment* package from Mangiola *et al.*
+
+-   Printing says: "*SummarizedExperiment-tibble abstraction*"
 
 ```{r}
 #| echo: true
@@ -271,7 +273,7 @@ se |>
 #| echo: true
 se |> 
   filter(condition == "x") |>
-  colData(se_sub)
+  colData()
 ```
 
 ## Facilitates quick exploration
@@ -319,7 +321,20 @@ sce |>
 
 ## Efficient operation on SE with `plyxp`
 
-more here...
+-   Justin Landis (UNC BCB) noticed some opportunities for more
+    efficient operations.
+
+-   Also, reduce ambiguity, allow multiple ways to access data across
+    context. Leveraging data masks from *rlang*.
+
+-   Developed in Summer 2024: `plyxp`, stand-alone but also as a
+    *tidySummarizedExperiment* engine.
+
+![](figures/plyxp.png){fig-align="center"}
+
+## Efficient operation on SE with `plyxp`
+
+![](figures/plyxp-bindings.png){fig-align="center"}
 
 ## Suppose the following SE object
 
@@ -358,13 +373,13 @@ xp
 
 ```{r}
 #| echo: true
-xp |> 
+xp |> # assay is default context for mutate()
   mutate(norm_counts = counts / .rows$length)
 ```
 
 ## What was that `.rows$` doing?
 
-show image here
+![](figures/plxyp-pronouns.png){fig-align="center"}
 
 ## Grammar for group and summarize
 
@@ -376,6 +391,16 @@ summed <- xp |>
 summed
 assay(summed)
 ```
+
+## Multiple implementations
+
+```{r}
+#| echo: true
+xp |> # .assays_asis gives direct access to the matrix
+  mutate(rows(ave_counts = rowMeans(.assays_asis$counts)))
+```
+
+-   See vignette for more: <https://jtlandis.github.io/plyxp/>
 
 ## The `plyxp` class
 
@@ -484,9 +509,15 @@ y |>
   join_nearest(x, distance=TRUE)
 ```
 
-## Assess overlap significance using a tidy grammar
+## Assess significance using a tidy grammar
 
-something here
+-   Asking about the enrichment of variants near genes, or peaks in
+    TADs, often requires a lot of custom R code, lots of loops and
+    control code.
+
+-   Hard to read, hard to maintain, hard at submission/publication.
+
+-   Instead: use familiar verbs, stacked genomic range sets.
 
 ## Defining null genomic range sets
 
@@ -495,10 +526,12 @@ something here
     tool to assist with making genomic comparisons.
 
 -   Only provides null genomic range sets for investigating various
-    hypotheses.
+    hypotheses. That's it!
 
--   Doesn't do enrichment analysis per se, but can be combined with
-    `plyranges`
+-   Doesn't do enrichment analysis *per se*, but can be combined with
+    *plyranges*, *ggplot2*, etc.
+
+![](figures/nullranges.png){fig-align="center"}
 
 ## Bootstrapping ranges
 
@@ -563,7 +596,6 @@ m <- matchRanges(focal = xprime, pool = x, covar = ~score)
 plotCovariate(m)
 ```
 
-
 ## Bind ranges
 
 ```{r}
@@ -577,7 +609,7 @@ combined <- bind_ranges(
 ```
 
 This is now "tidy data" with the two group concatenated and a new
-metadata column, `origin`. 
+metadata column, `origin`.
 
 ## Group and summarize
 
@@ -615,23 +647,26 @@ Published as Application Notes in 2023:
 
 ## Current state and future directions
 
--   Writing up `plyxp` as an Application Note
+-   Writing up `plyxp` as an Application Note.
 
--   Have shown it locally and to an industry team
+-   Have shown it locally and to an industry team.
+
+-   Working with Stefano Mangiola's team on consistent printing,
+    messaging.
+
+-   Working on tutorials, workshops, documentation.
 
 ## What has been implemented
 
-Put people's packages names etc.
+-   Matrix-shaped objects (SE, SCE) - Mangiola *et al.*
 
--   Matrix-shaped objects (SE, SCE)
+-   Ranges - Lee *et al.*
 
--   Ranges
+-   Interactions - Serizay *et al.*
 
--   Interactions
+-   Cytometry - Keyes *et al.*
 
--   Cytometry
-
--   Spatial
+-   Spatial - Hutchison *et al.*
 
 -   more to come...
 
@@ -640,6 +675,7 @@ Put people's packages names etc.
 -   Package code and non-standard evaluation (IMO I don't recommend)
 -   Optimized code
 -   Conflicts
+-   Documentation!
 
 ## How to contribute
 
@@ -650,15 +686,15 @@ Put people's packages names etc.
 
 -   `#tidiness_in_bioc` channel in Bioconductor Slack
 
--   More complicated use cases: 
-    [Tidy ranges tutorial](https://tidyomics.github.io/tidy-ranges-tutorial)
+-   More complicated use cases: [Tidy ranges
+    tutorial](https://tidyomics.github.io/tidy-ranges-tutorial)
 
 ## Omics data analysis requires looking at:
 
 -   main contributions to variance (e.g. PCA, see `plotPCA` for bulk
     and [OSCA](https://bioconductor.org/books/release/OSCA/) for sc),
     also `variancePartition`
--   column and row densities (`geom_density` of select rows/columns, 
+-   column and row densities (`geom_density` of select rows/columns,
     or `geom_violin`)
 -   known positive features, feature-level plots (`filter` to feature,
     pipe to `geom_point` etc.)
