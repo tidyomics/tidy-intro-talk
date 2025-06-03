@@ -4,7 +4,7 @@
     "href": "tidy-intro-talk.html#tidyomics-project",
     "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Tidyomics project",
-    "text": "Tidyomics project\nAn open, open-source project spanning multiple R packages, and developers from around the world. Operates within the Bioconductor Project, with separate funding and organization. Coordination of development via GitHub Projects.\n\nhttps://github.com/tidyomics\nAnnouncement paper\n#tidiness_in_bioc channel in Bioconductor Slack"
+    "text": "Tidyomics project\nAn open, open-source project spanning multiple R packages, and developers from around the world. Operates within the Bioconductor Project, with separate funding and organization. Coordination of development via GitHub Projects.\n\nhttps://github.com/tidyomics\nAnnouncement paper\n#tidiness_in_bioc channel in Zulip"
   },
   {
     "objectID": "tidy-intro-talk.html#what-is-tidy-data",
@@ -224,11 +224,11 @@
     "text": "Unwrapping plyxp\n\nxp |&gt; se()\n\nclass: SummarizedExperiment \ndim: 3 4 \nmetadata(0):\nassays(1): counts\nrownames(3): A B C\nrowData names(1): length\ncolnames(4): a b c d\ncolData names(1): type"
   },
   {
-    "objectID": "tidy-intro-talk.html#use-in-long-read-rna-seq",
-    "href": "tidy-intro-talk.html#use-in-long-read-rna-seq",
+    "objectID": "tidy-intro-talk.html#tidyomics-in-long-read-rna-seq-analysis",
+    "href": "tidy-intro-talk.html#tidyomics-in-long-read-rna-seq-analysis",
     "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
-    "section": "Use in long read RNA-seq",
-    "text": "Use in long read RNA-seq\n\nFiltering, exploration, QC\nData thinning (count splitting)\nGrouping isoforms for DTU analysis, keeping track of aggregated transcript sets\nProjecting splicing features from transcript-level quantification and analysis to events like skipped exons, retained introns, alternative 5’ / 3’ UTR, etc."
+    "section": "tidyomics in long read RNA-seq analysis",
+    "text": "tidyomics in long read RNA-seq analysis\n\nFiltering, exploration, QC\nData thinning (count splitting)\nGrouping isoforms for DTU analysis, keeping track of aggregated transcript sets\nProjecting splicing features from transcript-level quantification and analysis to events like skipped exons, retained introns, alternative 5’ / 3’ UTR, etc."
   },
   {
     "objectID": "tidy-intro-talk.html#computing-on-genomic-ranges",
@@ -285,6 +285,41 @@
     "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Convenience functions",
     "text": "Convenience functions\n\ny |&gt; \n  anchor_5p() |&gt; # 5', 3', start, end, center\n  mutate(width=1) |&gt;\n  join_nearest(x, distance=TRUE)\n\nGRanges object with 3 ranges and 3 metadata columns:\n      seqnames    ranges strand |       id     score  distance\n         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;factor&gt; &lt;numeric&gt; &lt;integer&gt;\n  [1]        1       101      * |        a   4.88780        12\n  [2]        1       451      * |        b   3.99047         1\n  [3]        1       801      * |        c   6.49877        22\n  -------\n  seqinfo: 1 sequence from an unspecified genome; no seqlengths"
+  },
+  {
+    "objectID": "tidy-intro-talk.html#manipulating-transcripts-for-long-read-rna-seq",
+    "href": "tidy-intro-talk.html#manipulating-transcripts-for-long-read-rna-seq",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
+    "section": "Manipulating transcripts for long read RNA-seq",
+    "text": "Manipulating transcripts for long read RNA-seq\n\nBea Campillo in the lab (UNC BCB) was interested in developing a visualization tool after differential transcript usage (DTU)\nWe run e.g. oarfish, import into R with tximeta, then run satuRn for DTU testing\nBea developed SPLain for visualizing per gene DTU results, also detecting skipped exons and performing sequence analysis using plyranges. Coming soon!"
+  },
+  {
+    "objectID": "tidy-intro-talk.html#splain-visualize-splicing-changes",
+    "href": "tidy-intro-talk.html#splain-visualize-splicing-changes",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
+    "section": "SPLain: visualize splicing changes",
+    "text": "SPLain: visualize splicing changes"
+  },
+  {
+    "objectID": "tidy-intro-talk.html#splain-visualize-splicing-changes-1",
+    "href": "tidy-intro-talk.html#splain-visualize-splicing-changes-1",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
+    "section": "SPLain: visualize splicing changes",
+    "text": "SPLain: visualize splicing changes"
+  },
+  {
+    "objectID": "tidy-intro-talk.html#splain-sequence-analysis",
+    "href": "tidy-intro-talk.html#splain-sequence-analysis",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
+    "section": "SPLain: sequence analysis",
+    "text": "SPLain: sequence analysis"
+  },
+  {
+    "objectID": "tidy-intro-talk.html#splain-sequence-analysis-1",
+    "href": "tidy-intro-talk.html#splain-sequence-analysis-1",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
+    "section": "SPLain: sequence analysis",
+    "text": "SPLain: sequence analysis\n\npos_exons  &lt;- exons_flat |&gt; filter(sign ==  1)\nneg_exons &lt;- exons_flat |&gt; filter(sign ==  -1)\n\ncandidates &lt;- pos_exons |&gt;\n  filter_by_non_overlaps_directed(neg_exons) |&gt;\n\n# ...\n\nupstr_downreg_exons &lt;- downreg_exons |&gt;\n  flank_upstream(width = width_upstream) \n\nseq_downreg_exons &lt;-  Hsapiens |&gt;\n  getSeq(upstr_downreg_exons) |&gt;\n  RNAStringSet()"
   },
   {
     "objectID": "tidy-intro-talk.html#assess-significance-using-a-tidy-grammar",

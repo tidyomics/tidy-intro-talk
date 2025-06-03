@@ -2,7 +2,7 @@
 title: "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data"
 author:
   - name: "Michael Love"
-    affiliation: "Biostatistics & Genetics, UNC-Chapel Hill"
+    affiliation: "Dept of Genetics, Dept of Biostatistics, UNC-Chapel Hill"
 format: 
   revealjs:
     theme: simple
@@ -33,7 +33,7 @@ development via GitHub Projects.
 -   [Announcement
     paper](https://www.biorxiv.org/content/10.1101/2023.09.10.557072v2)
 
--   `#tidiness_in_bioc` channel in Bioconductor Slack
+-   `#tidiness_in_bioc` channel in Zulip
 
 ## What is "tidy data"
 
@@ -419,7 +419,7 @@ colData(xp)
 xp |> se()
 ```
 
-## Use in long read RNA-seq
+## tidyomics in long read RNA-seq analysis
 
 -   Filtering, exploration, QC
 
@@ -520,6 +520,45 @@ y |>
   anchor_5p() |> # 5', 3', start, end, center
   mutate(width=1) |>
   join_nearest(x, distance=TRUE)
+```
+
+## Manipulating transcripts for long read RNA-seq
+
+- Bea Campillo in the lab (UNC BCB) was interested in developing a visualization tool after differential transcript usage (DTU)
+- We run e.g. [oarfish](https://github.com/COMBINE-lab/oarfish), import into R with tximeta, then run [satuRn](https://www.bioconductor.org/packages/satuRn) for DTU testing
+- Bea developed *SPLain* for visualizing per gene DTU results, also detecting skipped exons and performing sequence analysis using *plyranges*. Coming soon!
+
+## SPLain: visualize splicing changes
+
+![](figures/splain1a.png){fig-alt="SPLain app" fig-align="center"}
+
+## SPLain: visualize splicing changes
+
+![](figures/splain1b.png){fig-alt="SPLain app" fig-align="center"}
+
+## SPLain: sequence analysis
+
+![](figures/splain2.png){fig-alt="SPLain app" fig-align="center"}
+
+## SPLain: sequence analysis
+
+```{r}
+#| eval: false
+#| echo: true
+pos_exons  <- exons_flat |> filter(sign ==  1)
+neg_exons <- exons_flat |> filter(sign ==  -1)
+
+candidates <- pos_exons |>
+  filter_by_non_overlaps_directed(neg_exons) |>
+
+# ...
+
+upstr_downreg_exons <- downreg_exons |>
+  flank_upstream(width = width_upstream) 
+
+seq_downreg_exons <-  Hsapiens |>
+  getSeq(upstr_downreg_exons) |>
+  RNAStringSet()
 ```
 
 ## Assess significance using a tidy grammar
