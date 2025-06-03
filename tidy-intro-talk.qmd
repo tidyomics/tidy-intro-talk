@@ -419,6 +419,19 @@ colData(xp)
 xp |> se()
 ```
 
+## Use in long read RNA-seq
+
+-   Filtering, exploration, QC
+
+-   Data thinning (count splitting)
+
+-   Grouping isoforms for DTU analysis, keeping track of aggregated
+    transcript sets
+
+-   Projecting splicing features from transcript-level quantification
+    and analysis to events like skipped exons, retained introns,
+    alternative 5' / 3' UTR, etc.
+
 ## Computing on genomic ranges
 
 -   Translate biological questions about the genome into code.
@@ -711,7 +724,7 @@ Published as Application Notes in 2023:
 
 -   Stefano Mangiola (co-lead, tidySE, tidySCE, spatial)
 
--   Justin Landis (*plyxp*)
+-   Justin Landis (*plyxp*) and Beatriz Campillo Minano (*SPLain*)
 
 -   Eric Davis, Wancen Mu, Doug Phanstiel (*nullranges*)
 

@@ -224,6 +224,13 @@
     "text": "Unwrapping plyxp\n\nxp |&gt; se()\n\nclass: SummarizedExperiment \ndim: 3 4 \nmetadata(0):\nassays(1): counts\nrownames(3): A B C\nrowData names(1): length\ncolnames(4): a b c d\ncolData names(1): type"
   },
   {
+    "objectID": "tidy-intro-talk.html#use-in-long-read-rna-seq",
+    "href": "tidy-intro-talk.html#use-in-long-read-rna-seq",
+    "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
+    "section": "Use in long read RNA-seq",
+    "text": "Use in long read RNA-seq\n\nFiltering, exploration, QC\nData thinning (count splitting)\nGrouping isoforms for DTU analysis, keeping track of aggregated transcript sets\nProjecting splicing features from transcript-level quantification and analysis to events like skipped exons, retained introns, alternative 5’ / 3’ UTR, etc."
+  },
+  {
     "objectID": "tidy-intro-talk.html#computing-on-genomic-ranges",
     "href": "tidy-intro-talk.html#computing-on-genomic-ranges",
     "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
@@ -403,6 +410,6 @@
     "href": "tidy-intro-talk.html#acknowledgments",
     "title": "Tidyomics: Enabling Tidy Data Analysis for Complex Biological Data",
     "section": "Acknowledgments",
-    "text": "Acknowledgments\n\n\nStefano Mangiola (co-lead, tidySE, tidySCE, spatial)\nJustin Landis (plyxp)\nEric Davis, Wancen Mu, Doug Phanstiel (nullranges)\nStuart Lee, M. Lawrence, D. Cook (plyranges developers)\n\n\ntidyomics developers: William Hutchison, Timothy Keyes, Helena Crowell, Jacques Serizay, Charlotte Soneson, Eric Davis, Noriaki Sato, Lambda Moses, Boyd Tarlinton, Abdullah Nahid, Miha Kosmac, Quentin Clayssen, Victor Yuan, Wancen Mu, Ji-Eun Park, Izabela Mamede, Min Hyung Ryu, Pierre-Paul Axisa, Paulina Paiz, Chi-Lam Poon, Ming Tang\ntidyomics project funded by an Essential Open Source Software award from CZI and Wellcome Trust"
+    "text": "Acknowledgments\n\n\nStefano Mangiola (co-lead, tidySE, tidySCE, spatial)\nJustin Landis (plyxp) and Beatriz Campillo Minano (SPLain)\nEric Davis, Wancen Mu, Doug Phanstiel (nullranges)\nStuart Lee, M. Lawrence, D. Cook (plyranges developers)\n\n\ntidyomics developers: William Hutchison, Timothy Keyes, Helena Crowell, Jacques Serizay, Charlotte Soneson, Eric Davis, Noriaki Sato, Lambda Moses, Boyd Tarlinton, Abdullah Nahid, Miha Kosmac, Quentin Clayssen, Victor Yuan, Wancen Mu, Ji-Eun Park, Izabela Mamede, Min Hyung Ryu, Pierre-Paul Axisa, Paulina Paiz, Chi-Lam Poon, Ming Tang\ntidyomics project funded by an Essential Open Source Software award from CZI and Wellcome Trust"
   }
 ]
